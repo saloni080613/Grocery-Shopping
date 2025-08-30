@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Search() {
+export default function Account() {
   return (
     <div>
-      Search
+      Account
     </div>
   )
 }
