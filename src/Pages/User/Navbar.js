@@ -62,17 +62,17 @@ export default function Navbar() {
                   <BsFillPersonFill />
                 </button>
                 <ul className={`dropdown-menu   ${isOpen ? 'show' : ''}`}>
-                  <li>
-                    <Link className="dropdown-item " to="/Login">
+                  <li onClick={() => {setIsOpen(false)}}>
+                    <Link className="dropdown-item " to="/Login" >
                       Login
                     </Link>
                   </li>
-                  <li>
+                  <li onClick={() => {setIsOpen(false)}}>
                     <Link className="dropdown-item" to="/SignUp">
                       Sign Up
                     </Link>
-                  </li>
-                  <li>
+                  </li >
+                  <li onClick={() => {setIsOpen(false)}} >
                     <Link className="dropdown-item" to="/Account">
                       My Account
                     </Link>
