@@ -69,7 +69,7 @@ export default function Navbar() {
                   </li>
                   <li>
                     <Link className="dropdown-item" to="/SignUp">
-                      Sign in
+                      Sign Up
                     </Link>
                   </li>
                   <li>

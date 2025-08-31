@@ -1,13 +1,13 @@
 import './App.css';
 import {Routes,Route} from "react-router-dom";
-import Navbar from './Components/Navbar';
-import Home from './Components/Home';
-import Cart from './Components/Cart';
-import Login from './Components/Login';
-import Search from './Components/Search';
-import Order from './Components/Order';
-import SignUp from './Components/SignUp';
-import Account from './Components/Account';
+import Navbar from './Pages/User/Navbar';
+import Home from './Pages/User/Home';
+import Cart from './Pages/User/Cart';
+import Login from './Common/Login';
+import Search from './Pages/User/Search';
+import Order from './Pages/User/Order';
+import SignUp from './Common/SignUp';
+import Account from './Common/Account';
 
 function App() {
   return (
