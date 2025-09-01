@@ -128,7 +128,7 @@ export default function SignUp() {
               </button>
               <div className="text-start text-small">
                 alreday have an account?{" "}
-                <Link to="/Login" style={{ color: "#44b30dff" }}>
+                <Link to="/Login" style={{ color: "#0da308" }}>
                   login now
                 </Link>
               </div>

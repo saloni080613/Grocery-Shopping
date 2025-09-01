@@ -75,7 +75,7 @@ export default function Login() {
                     setIsOpen(true);
                   }}
                 >
-                  Log in as
+                  Log in as <span style={{ color: "#0da308" }}>{userIs}</span>
                 </button>
                 <ul className={`dropdown-menu ${isOpen ? "show" : ""}`} style={{ left: "50%", transform: "translateX(-50%)" }}>
                   <li

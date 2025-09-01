@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { PiShoppingCartBold } from "react-icons/pi";
 import { IoSearch } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { useState } from 'react';
-
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  // const [userState, setuserState] = useState(true);
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("UserState:", userState);
+   
+  // };
 
   return (
     <div>
@@ -20,7 +25,7 @@ export default function Navbar() {
             className="navbar-brand text-tertiary fs-3 d-none d-md-block"
             style={{ color: "#3a3d40" }}
           >
-            FreshMart
+            Fresh<span style={{ color: "#0da308" }}>Mart</span>
           </div>
           <div className="d-flex justify-content-between">
             <div className="ms-2">
@@ -51,28 +56,57 @@ export default function Navbar() {
               </Link>
             </div>
 
-                  <div className=" ">
+            <div className=" ">
               <div className="dropdown">
                 <button
-                  className="btn dropdown-toggle ms-2 fs-2 "
+                  className="btn  ms-2 fs-2 "
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
                   style={{ color: "#3a3d40" }}
                 >
                   <BsFillPersonFill />
                 </button>
-                <ul className={`dropdown-menu   ${isOpen ? 'show' : ''}`}>
-                  <li onClick={() => {setIsOpen(false)}}>
-                    <Link className="dropdown-item " to="/Login" >
-                      Login
-                    </Link>
-                  </li>
-                  <li onClick={() => {setIsOpen(false)}}>
-                    <Link className="dropdown-item" to="/SignUp">
-                      Sign Up
-                    </Link>
-                  </li >
-                  <li onClick={() => {setIsOpen(false)}} >
+                <ul className={`dropdown-menu   ${isOpen ? "show" : ""}`}>
+                  {/* {userState && (
+                    <li
+                      onClick={() => {
+                        setIsOpen(false);
+                        setuserState(false);
+                      
+                      }}
+                    >
+                      <Link className="dropdown-item " to="/Login">
+                        Log out
+                      </Link>
+                    </li>
+                  )} */}
+                  
+                    <>
+                      <li
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                      >
+                        <Link className="dropdown-item " to="/Login">
+                          Login
+                        </Link>
+                      </li>
+                      <li
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                      >
+                        <Link className="dropdown-item" to="/SignUp">
+                          Sign Up
+                        </Link>
+                      </li>
+                    </>
+                 
+                  <li
+                    onClick={() => {
+                      setIsOpen(false);
+                    }}
+                  >
                     <Link className="dropdown-item" to="/Account">
                       My Account
                     </Link>
@@ -80,15 +114,15 @@ export default function Navbar() {
                 </ul>
               </div>
             </div>
-             <div className="ms-3 mt-2 fs-2">
+            <div className="ms-3 mt-2 fs-2">
               <Link to="/Cart" style={{ color: "#3a3d40" }}>
                 <PiShoppingCartBold />
               </Link>
             </div>
-
           </div>
         </div>
       </nav>
     </div>
+    
   );
 }
