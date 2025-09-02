@@ -18,32 +18,36 @@ import AdminOrders from "./Pages/Admin/AdminOrders";
 
 
 function App() {
+  return (
  
-    // <div>
-    //   {/* <Navbar />
-        
-    //    <Routes>
-    //         <Route path="/" element={<Home />} />
-    //         <Route path="/Cart" element={<Cart />} />
-    //         <Route path="/Order" element={<Order />} />
-    //         <Route path="/Login" element={<Login />} />
-    //         <Route path="/Search" element={<Search />} />
-    //         <Route path="/SignUp" element={<SignUp />} />
-    //         <Route path="/Account" element={<Account />} />
-    //       </Routes> */}
-    //       </div>
-           return (
-            <div>
+    
+    <div>
 
-      <AdminNavbar />
-      <Routes>
-        <Route path="/" element={<AdminHome />} />
-        <Route path="/AdminRegister" element={<AdminRegister />} />
-        <Route path="/Account" element={<Account />} />
-        <Route path="/AdminOrders" element={<AdminOrders />} />
-        <Route path="/AdminProducts" element={<AdminProducts />} />
-      </Routes>
+       <AdminNavbar />
+       <Routes>
+     <Route path="/" element={<AdminHome />} />
+         <Route path="/AdminRegister" element={<AdminRegister />} />
+         <Route path="/Account" element={<Account />} />
+         <Route path="/AdminOrders" element={<AdminOrders />} />
+         <Route path="/AdminProducts" element={<AdminProducts />} />
+       </Routes>
     </div>
+  
+  // <div>
+  //      <Navbar />
+        
+  //      <Routes>
+  //           <Route path="/" element={<Home />} />
+  //           <Route path="/Cart" element={<Cart />} />
+  //           <Route path="/Order" element={<Order />} />
+  //           <Route path="/Login" element={<Login />} />
+  //           <Route path="/Search" element={<Search />} />
+  //           <Route path="/SignUp" element={<SignUp />} />
+  //           <Route path="/Account" element={<Account />} />
+  //         </Routes> 
+  //         </div>
+          
+          
   );
 }
 

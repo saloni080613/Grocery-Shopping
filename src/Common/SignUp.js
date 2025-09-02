@@ -28,7 +28,7 @@ export default function SignUp() {
   return (
       <div className="container">
         <div className="row align-items-center " style={{ marginTop: "10vh" }}>
-          <div className="col-md-5 ">
+          <div className="col-md-5 d-none d-md-block ">
             <img
               src="/login.png"
               alt="login"
