@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
   // const [userState, setuserState] = useState(true);
 
   // const handleSubmit = (e) => {
@@ -17,7 +18,7 @@ export default function Navbar() {
   return (
     <div>
       <nav
-        className="navbar navbar-expand-lg bg-body-white shadow-sm"
+        className="navbar navbar-expand-lg bg-body-white shadow-sm nav-underline"
         style={{ color: "#3a3d40" }}
       >
         <div className="container-fluid">
@@ -29,7 +30,7 @@ export default function Navbar() {
           </div>
           <div className="d-flex justify-content-between">
             <div className="ms-2">
-              <div className="nav-link fs-5 mt-3 active">
+              <div className="nav-link fs-5 mt-3 ">
                 <Link
                   to="/"
                   style={{ color: "#3a3d40", textDecoration: "none" }}
@@ -45,6 +46,26 @@ export default function Navbar() {
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   orders
+                </Link>
+              </div>
+            </div>
+            <div className="ms-3">
+              <div className="nav-link fs-5 mt-3 ">
+                <Link
+                  to="/Services"
+                  style={{ color: "#3a3d40", textDecoration: "none" }}
+                >
+                  services
+                </Link>
+              </div>
+            </div>
+            <div className="ms-3">
+              <div className="nav-link fs-5 mt-3 ">
+                <Link
+                  to="/AboutUs"
+                  style={{ color: "#3a3d40", textDecoration: "none" }}
+                >
+                  about us
                 </Link>
               </div>
             </div>

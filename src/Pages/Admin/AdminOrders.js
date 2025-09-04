@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function adminOrders() {
+export default function AdminOrders() {
   return (
     <div>
       
