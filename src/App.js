@@ -3,13 +3,14 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from './Pages/User/Navbar';
 import Home from './Pages/User/Home';
 import Cart from './Pages/User/Cart';
-import Footer from './Pages/User/Footer';
+import Wishlist from './Pages/User/Wishlist';
 import AboutUs from './Pages/User/AboutUs';
 import Services from './Pages/User/Services';
 import Search from './Pages/User/Search';
 import Order from './Pages/User/Order';
 import SignUp from "./Common/SignUp";
 import Login from "./Common/Login";
+import Footer from './Pages/User/Footer';
 import Account from "./Common/Account";
 // import AdminNavbar from "./Pages/Admin/AdminNavbar"
 // import AdminHome from "./Pages/Admin/AdminHome";
@@ -33,6 +34,8 @@ function App() {
     //      <Route path="/AdminOrders" element={<AdminOrders />} />
     //      <Route path="/AdminProducts" element={<AdminProducts />} />
     //    </Routes>
+
+    //   <Footer/>
     // </div>
   
   <div>
@@ -48,6 +51,7 @@ function App() {
             <Route path="/Search" element={<Search />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/Account" element={<Account />} />
+            <Route path="/Wishlist" element={<Wishlist />} />
           </Routes> 
 
         <Footer/>

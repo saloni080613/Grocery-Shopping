@@ -33,16 +33,16 @@ export default function Login() {
               <label
                 className="text-start fw-medium "
                 style={{ color: "#646663" }}
-                htmlfor="userName"
+                htmlfor="email"
               >
-                Username*
+                Email*
               </label>
               <input
                 style={{ border: "2px solid #9a9896ff", borderRadius: "6px" }}
-                id="userName"
+                id="email"
                 required
                 value={userName}
-                type="text"
+                type="email"
                 onChange={(e) => setuserName(e.target.value)}
               ></input>
 
@@ -65,7 +65,7 @@ export default function Login() {
                 type="submit"
                 className="btn w-50 mt-4 btn-success "
               >
-                Log in
+                Login
               </button>
               <div className="dropend">
                 <button
@@ -75,7 +75,7 @@ export default function Login() {
                     setIsOpen(true);
                   }}
                 >
-                  Log in as <span style={{ color: "#0da308" }}>{userIs}</span>
+                  Login as <span style={{ color: "#0da308" }}>{userIs}</span>
                 </button>
                 <ul className={`dropdown-menu ${isOpen ? "show" : ""}`} style={{ left: "50%", transform: "translateX(-50%)" }}>
                   <li

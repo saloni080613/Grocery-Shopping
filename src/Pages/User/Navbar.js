@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { PiShoppingCartBold } from "react-icons/pi";
+import { IoHeart } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
@@ -35,7 +36,7 @@ export default function Navbar() {
                   to="/"
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
-                  home
+                  Home
                 </Link>
               </div>
             </div>
@@ -45,7 +46,7 @@ export default function Navbar() {
                   to="/Order"
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
-                  orders
+                  Orders
                 </Link>
               </div>
             </div>
@@ -55,7 +56,7 @@ export default function Navbar() {
                   to="/Services"
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
-                  services
+                  Services
                 </Link>
               </div>
             </div>
@@ -65,7 +66,7 @@ export default function Navbar() {
                   to="/AboutUs"
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
-                  about us
+                  About us
                 </Link>
               </div>
             </div>
@@ -135,11 +136,18 @@ export default function Navbar() {
                 </ul>
               </div>
             </div>
+            
+            <div className="ms-3 mt-2 fs-2">
+              <Link to="/Wishlist" style={{ color: "#3a3d40" }}>
+                <IoHeart />
+              </Link>
+            </div>
             <div className="ms-3 mt-2 fs-2">
               <Link to="/Cart" style={{ color: "#3a3d40" }}>
                 <PiShoppingCartBold />
               </Link>
             </div>
+
           </div>
         </div>
       </nav>

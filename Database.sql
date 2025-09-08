@@ -9,13 +9,18 @@ DROP TABLE IF EXISTS Addresses;
 DROP TABLE IF EXISTS Admins;
 DROP TRIGGER IF EXISTS before_insert_cart_item;
 
+-- add wishlist table {product id , customer id (refernce key)}
 
 CREATE TABLE Addresses (
-    address_id INT AUTO_INCREMENT PRIMARY KEY,
-    street_address VARCHAR(255) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    state VARCHAR(50) NOT NULL,
-    postal_code VARCHAR(20) NOT NULL
+    address_id INT AUTO_INCREMENT PRIMARY KEY, --customer id as refernce , keep address id
+street VARCHAR(150),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100),
+    landmark VARCHAR(150) NULL,
+    address_type ENUM('home','work','other') DEFAULT 'home',
+    
 );
 
 
@@ -27,11 +32,11 @@ CREATE TABLE Categories (
 
 CREATE TABLE Customers (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NULL,
-    phone BIGINT(10) NOT NULL UNIQUE,
-    address_id INT,
-    FOREIGN KEY (address_id) REFERENCES Addresses(address_id),
+    name VARCHAR(100) NOT NULL,--make it username
+    email VARCHAR(100) NULL,--not null,unique
+    phone BIGINT(10) NOT NULL UNIQUE, 
+    -- add password VARCHAR(255),
+ --add status column ("active","deactive")
     -- Constraint to ensure the phone number is exactly 10 digits
     CONSTRAINT chk_phone_length CHECK (phone >= 1000000000 AND phone <= 9999999999)
 );
@@ -39,10 +44,12 @@ CREATE TABLE Customers (
 
 CREATE TABLE Products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,-- add description column
+    -- stock_quantity INT default 0,
+    --unit VARCHAR(20)not null,   -- e.g., "kg", "litre", "piece"
     price DECIMAL(10,2) NOT NULL,
     image_url VARCHAR(500),
-    quantity INT DEFAULT 0,
+   
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES Categories(category_id)
 );
@@ -53,27 +60,33 @@ CREATE TABLE Orders (
     customer_id INT,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(10,2),
-    total_quantity INT,
-    status VARCHAR(50) DEFAULT NULL, -- New status column
+    
+    status VARCHAR(50) --ENUM('pending','confirmed','shipped','delivered','cancelled') DEFAULT 'pending',
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
 );
 
+--Order_Items (
+  -- 
+  ----  order_id INT 
+  --  product_id INT
+  --  product_quantity INT,
+  ---  product_price DECIMAL(10,2)   -- store at time of purchase (not current price)
+--)
 
 CREATE TABLE Payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
-    payment_method VARCHAR(50),
-    total_amount DECIMAL(10,2),
+    payment_method VARCHAR(50),--ENUM('card','upi','cod','wallet'),
+ 
     FOREIGN KEY (order_id) REFERENCES Orders(order_id)
 );
 
 
 CREATE TABLE Cart (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,--no need 
     customer_id INT,
     product_id INT,
-    quantity INT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL,--default 1
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
@@ -84,8 +97,10 @@ CREATE TABLE Admins (
     name VARCHAR(100) NOT NULL,
     phone BIGINT(10) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    -- Constraint to ensure the phone number is exactly 10 digits
+    --password column
+   
     CONSTRAINT chk_admin_phone_length CHECK (phone >= 1000000000 AND phone <= 9999999999)
+    --status
 );
 
 -- Create the trigger

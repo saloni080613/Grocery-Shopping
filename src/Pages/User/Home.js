@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom"
 
 
 export default function Home() {
@@ -25,10 +26,10 @@ export default function Home() {
 
             <p className="col-10 mb-4" style={{ color: "#3a3d40" }}>
               <i>"Freshness and convenience, all in one place. Order your favorite
-              groceries online and have them delivered right to your doorstep.
+              groceries online and have them delivered right to your doorstep.<br/>
               Eat well, live well, and shop smart with us."</i>
             </p>
-            <button className="btn btn-dark " >Shop Now </button>
+            <Link to="/Search" className="btn btn-dark " >Shop Now </Link>
           </div>
         </div>
         <div className="col-md-6"></div>

@@ -37,7 +37,7 @@ export default function AdminNavbar() {
                         to="/adminHome"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
-                        home
+                        Home
                       </Link>
                     </div>
                   </div>
@@ -47,7 +47,7 @@ export default function AdminNavbar() {
                         to="/adminProducts"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
-                        products
+                        Products
                       </Link>
                     </div>
                   </div>
@@ -57,7 +57,7 @@ export default function AdminNavbar() {
                         to="/adminOrders"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
-                        orders
+                        Orders
                       </Link>
                     </div>
                   </div>

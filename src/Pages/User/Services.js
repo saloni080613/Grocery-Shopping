@@ -40,6 +40,7 @@ export default function Services() {
         "Pages load quickly, even on slower connections—so you don’t wait to shop, add, or check out.",
       icon: "⚙️",
     },
+    
   ];
 
   return (
