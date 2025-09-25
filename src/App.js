@@ -7,7 +7,8 @@ import Wishlist from './Pages/User/Wishlist';
 import AboutUs from './Pages/User/AboutUs';
 import Services from './Pages/User/Services';
 import Search from './Pages/User/Search';
-import Order from './Pages/User/Order';
+import OrderTrack from './Pages/User/OrderTrack';
+import Order from './Pages/User/Order'
 import SignUp from "./Common/SignUp";
 import Login from "./Common/Login";
 import Footer from './Pages/User/Footer';
@@ -44,9 +45,10 @@ function App() {
        <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Cart" element={<Cart />} />
-            <Route path="/Order" element={<Order />} />
+            <Route path="/OrderTrack" element={<OrderTrack />} />
             <Route path="/AboutUs" element={<AboutUs />} />
             <Route path="/Services" element={<Services />} />
+            <Route path="/Order" element={<Order />} />
             <Route path="/Login" element={<Login />} />
             <Route path="/Search" element={<Search />} />
             <Route path="/SignUp" element={<SignUp />} />
