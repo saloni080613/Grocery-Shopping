@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 
+
 export default function Login() {
   const [userName, setuserName] = useState("");
   const [password, setpassword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
     const [userIs, setuserIs] = useState("customer");
+    
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Username:", userName);
     console.log("Password:", password);
        console.log("UserIs:", userIs);
+    
   };
   return (
     <div>

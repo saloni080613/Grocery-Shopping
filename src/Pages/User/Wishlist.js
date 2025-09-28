@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 import { IoHeart } from 'react-icons/io5'
 
 const DEMO_PRODUCTS = [
@@ -11,8 +11,13 @@ const DEMO_PRODUCTS = [
 ]
 
 export default function Wishlist() {
+  const { search } = useLocation();
+    const queryParams = new URLSearchParams(search);
+    const customerId = queryParams.get("customerId");
+     console.log("customer id : ",customerId)
+  
   const navigate = useNavigate()
-  const [wishlistIds, setWishlistIds] = useState([1, 5])
+  const [wishlistIds, setWishlistIds] = useState([1, 5]) // get productid using customerid
 
   function removeFromWishlist(productId) {
     setWishlistIds(prev => prev.filter(id => id !== productId))
@@ -30,6 +35,7 @@ export default function Wishlist() {
 
   function ProductCard({ product }) {
     return (
+     
       <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', position: 'relative' }}>
         <button
           aria-label={'Remove from wishlist'}
