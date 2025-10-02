@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
@@ -6,7 +6,6 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
   return (
     <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', position: 'relative' }}>
       <button
-        aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         onClick={onToggleWishlist}
         style={{
           position: 'absolute',
@@ -88,6 +87,38 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
 export default function Home() {
   const navigate = useNavigate();
   const [wishlistIds, setWishlistIds] = useState([]);
+  const [PRODUCTS, setPRODUCTS] = useState([]); // To store the list of users
+    const [loading, setLoading] = useState(true); // To show a loading message
+    const [error, setError] = useState(null); 
+
+    useEffect(() => {
+    
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/products/list');
+            
+           
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setPRODUCTS(data); 
+        } catch (e) {
+            setError(e.message); 
+        } finally {
+            setLoading(false); 
+        }
+    };
+    fetchUsers(); 
+}, []); 
+if (loading) {
+        return <p>Loading users...</p>;
+    }
+
+    if (error) {
+        return <p>Error fetching users: {error}</p>;
+    }
 
   const DEMO_PRODUCTS = [
     { id: 1, name: 'Fresh Apples', category: 'Fruits', price: 2.99, rating: 4.5, inStock: true, image: '/grocery1.jpg' },
@@ -116,7 +147,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* Hero Section */}
+  
       <div
         className="container-fluid shadow-sm"
         style={{
@@ -147,7 +178,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Featured Products Section */}
       <div className="container-fluid py-5" style={{ background: '#f8f9fa' }}>
         <div className="container">
           <div className="row mb-4">
@@ -163,7 +193,7 @@ export default function Home() {
               gap: 16,
               width: '100%'
             }}>
-              {DEMO_PRODUCTS.map(product => (
+              {PRODUCTS.map(product => (
                 <ProductCard
                   key={product.id}
                   product={product}
