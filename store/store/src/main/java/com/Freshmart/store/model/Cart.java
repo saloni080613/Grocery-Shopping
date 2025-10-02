@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 @Entity
 @Table(name = "Cart")
@@ -21,11 +20,11 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Integer customerId;
+    private Customers customer;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Integer productId;
+    private Products product;
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -40,20 +39,19 @@ public class Cart {
         this.id = id;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Customers getCustomer() {
+        return customer;
     }
 
-    public void setCustomer(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customers customer) {
+        this.customer = customer; }
+
+    public Products getProduct() {
+        return product;
     }
 
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProduct(Products product) {
+        this.product = product;
     }
 
     public Integer getQuantity() {

@@ -18,11 +18,11 @@ public class Wishlist {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Integer customerId;
+    private Customers customer;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Integer productId;
+    private Products product;
 
     public Wishlist() {}
 
@@ -34,19 +34,19 @@ public class Wishlist {
         this.id = id;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Customers getCustomer() {
+        return customer;
     }
 
-    public void setCustomer(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public Products getProduct() {
+        return product;
     }
 
-    public void setProduct(Integer productId) {
-        this.productId = productId;
+    public void setProduct(Products product) {
+        this.product = product;
     }
 }

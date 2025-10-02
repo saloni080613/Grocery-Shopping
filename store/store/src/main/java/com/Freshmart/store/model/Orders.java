@@ -21,7 +21,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Integer customerId;
+    private Customers customer;
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;
@@ -45,12 +45,12 @@ public class Orders {
         this.orderId = orderId;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Customers getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
     }
 
     public LocalDateTime getOrderDate() {

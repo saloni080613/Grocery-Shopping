@@ -20,7 +20,7 @@ public class Payments {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private Integer orderId;
+    private Orders order;
 
     @Column(name = "payment_method", length = 50)
     private String paymentMethod;
@@ -35,12 +35,12 @@ public class Payments {
         this.paymentId = paymentId;
     }
 
-    public Integer getOrderId() {
-        return orderId;
+    public Orders getOrder() {
+        return order;
     }
 
-    public void setOrder(Integer orderId) {
-        this.orderId = orderId;
+    public void setOrder(Orders order) {
+        this.order = order;
     }
 
     public String getPaymentMethod() {

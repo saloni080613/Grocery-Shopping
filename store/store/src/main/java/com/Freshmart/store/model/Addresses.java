@@ -17,7 +17,7 @@ public class Addresses {
     private Integer addressId;
 
     @Column(name = "customer_id")
-    private Integer customerId;
+    private Customers customer;
 
     @Column(name = "street", nullable = false, length = 255)
     private String street;
@@ -50,14 +50,13 @@ public class Addresses {
         this.addressId = addressId;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Customers getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
     }
-
     public String getStreet() {
         return street;
     }
