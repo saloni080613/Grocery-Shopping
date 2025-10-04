@@ -6,7 +6,7 @@ export default function Login() {
   const [userName, setuserName] = useState("");
   const [password, setpassword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [userIs, setuserIs] = useState("customer");
+  const [userIs, setuserIs] = useState("Customer");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,8 +19,8 @@ export default function Login() {
     };
 
     try {
-      // I've left a placeholder for your API endpoint here
-      const response = await fetch('/api/auth/login', { // TODO: Add your API endpoint
+      
+      const response = await fetch('/api/auth/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,11 +30,11 @@ export default function Login() {
 
       if (response.ok) {
         const responseData = await response.json();
-        const { id } = responseData;
+        const { id } = responseData.role;
 
-        if (userIs === 'customer') {
+        if (userIs === 'Customer') {
           navigate(`/?customerId=${id}`);
-        } else if (userIs === 'admin') {
+        } else if (userIs === 'Admin') {
           navigate(`/Adminpanel?adminId=${id}`);
         }
       } else {
