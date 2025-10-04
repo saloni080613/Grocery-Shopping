@@ -3,25 +3,11 @@ import React, { useMemo, useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
-// const DEMO_PRODUCTS = [
-//   { id: 1, name: 'Fresh Apples', category: 'Fruits', price: 2.99, inStock: true, image: '/grocery1.jpg' },
-//   { id: 2, name: 'Whole Milk', category: 'Dairy', price: 3.49, inStock: true, image: '/grocery2.jpg' },
-//   { id: 3, name: 'Brown Bread', category: 'Bakery', price: 1.99, inStock: false, image: '/grocery3.jpg' },
-//   { id: 4, name: 'Spinach Bunch', category: 'Vegetables', price: 1.49, inStock: true, image: '/grocery4.png' },
-//   { id: 5, name: 'Cheddar Cheese', category: 'Dairy', price: 4.99, inStock: true, image: '/_veggie.png' },
-// ];
-
-// // Demo categories array to mirror future Categories table
-// const DEMO_CATEGORIES = [
-//   'Fruits',
-//   'Dairy',
-//   'Bakery',
-//   'Vegetables',
-// ];
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
   return (
-    <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', position: 'relative' }}>
+    <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff',
+     position: 'relative' }}>
       <button
         aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         onClick={onToggleWishlist}
@@ -59,7 +45,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
         <div style={{ fontWeight: 600 }}>{product.name}</div>
         <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{product.category}</div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-          <span style={{ fontWeight: 700 }}>${product.price.toFixed(2)}</span>
+          <span style={{ fontWeight: 700 }}>₹{product.price.toFixed(2)}</span>
           
           {!product.inStock && <span style={{ fontSize: 12, color: 'crimson' }}>Out of stock</span>}
         </div>
@@ -109,61 +95,53 @@ export default function Search() {
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [sortBy, setSortBy] = useState('relevance'); // 'name-asc' | 'price-asc' | 'price-desc' | 'rating-desc'
+  const [sortBy, setSortBy] = useState('relevance'); 
   const [wishlistIds, setWishlistIds] = useState([]);
-    const [products, setProducts] = useState([]);
-  const [categories_name, setCategories] = useState([]);
 
-  const [loading, setLoading] = useState(true); // To show a loading message
-  const [error, setError] = useState(null); 
-    useEffect(() => {
-     
-     const fetchUsers = async () => {
-         try {
-             const response = await fetch('/api/products/list');
-             
-            
-             if (!response.ok) {
-                 throw new Error(`HTTP error! status: ${response.status}`);
-             }
+  const [products, setProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]); 
+
  
-             const data = await response.json();
-             setProducts(data); 
-         } catch (e) {
-             setError(e.message); 
-         } finally {
-             setLoading(false); 
-         }
-     };
-     fetchUsers(); 
-}, []);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-useEffect(() => {
-     
-     const fetchUsers = async () => {
-         try {
-             const response = await fetch('/api/categories/name');
-             
-            
-             if (!response.ok) {
-                 throw new Error(`HTTP error! status: ${response.status}`);
-             }
  
-             const data = await response.json();
-             setCategories(data); 
-         } catch (e) {
-             setError(e.message); 
-         } finally {
-             setLoading(false); 
-         }
-     };
-     fetchUsers(); 
-}, []);
+  // This single useEffect handles all initial data loading.
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+       
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          fetch('/api/products/list'),
+          fetch('/api/categories/name')
+        ]);
+   if (!productsResponse.ok) {
+          throw new Error(`HTTP error! status: ${productsResponse.status}`);
+        }
+        if (!categoriesResponse.ok) {
+            throw new Error(`HTTP error! status: ${categoriesResponse.status}`);
+        }
+
+        const productsData = await productsResponse.json();
+        const categoriesData = await categoriesResponse.json();
+
+        setProducts(productsData);
+        setAllCategories(categoriesData);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+       
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
 
 
-  const categories = categories_name;
+  const categories = allCategories;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -179,7 +157,7 @@ useEffect(() => {
         ? true
         : selectedCategories.includes(p.category);
       const matchesPrice = p.price >= minP && p.price <= maxP;
-    
+     
       const matchesStock = inStockOnly ? p.inStock : true;
 
       return matchesQuery && matchesCat && matchesPrice  && matchesStock;
@@ -194,7 +172,6 @@ useEffect(() => {
         items.sort((a, b) => b.price - a.price); break;
       
       default:
-        // relevance: keep natural order or simple heuristic
         if (q) {
           items.sort((a, b) => {
             const ai = a.name.toLowerCase().indexOf(q);
@@ -206,7 +183,7 @@ useEffect(() => {
     }
 
     return items;
-  }, [query, selectedCategories, priceMin, priceMax, inStockOnly, sortBy]);
+  }, [products,query, selectedCategories, priceMin, priceMax, inStockOnly, sortBy]);
 
  
   if (loading) {
@@ -230,13 +207,12 @@ useEffect(() => {
   }
 
   function handleAddToCart(product) {
-    // Replace with actual cart logic/integration later
-    // eslint-disable-next-line no-console
+   
     console.log('Add to cart:', product);
   }
 
   function handleOrderNow(product) {
-    // Navigate to Order page with product id as query param
+   
     navigate(`/Order?productId=${product.id}`);
   }
 
@@ -307,7 +283,6 @@ useEffect(() => {
         </div>
       </aside>
 
-      {/* Right: Search + Results */}
       <div>
         <div style={{
           display: 'flex',

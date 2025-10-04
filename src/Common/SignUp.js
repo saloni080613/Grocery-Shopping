@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 export default function SignUp() {
   const [userName, setuserName] = useState("");
@@ -9,7 +9,8 @@ export default function SignUp() {
   const [C_password, setC_password] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== C_password) {
       setPasswordError("Passwords do not match.");
@@ -23,6 +24,8 @@ export default function SignUp() {
     console.log("Phone Number:", phoneNo);
     console.log("Password:", password);
     console.log("Confirm Password:", C_password);
+    console.log("role : Customer");
+  
   };
 
   return (

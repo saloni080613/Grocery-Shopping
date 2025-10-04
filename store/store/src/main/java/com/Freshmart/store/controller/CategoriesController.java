@@ -1,4 +1,4 @@
- package com.Freshmart.store.controller; // Corrected
+ package com.Freshmart.store.controller;
 
 import com.Freshmart.store.model.Categories;
 import com.Freshmart.store.repository.CategoriesRepository;

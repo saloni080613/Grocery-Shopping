@@ -4,7 +4,8 @@ import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
   return (
-    <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', position: 'relative' }}>
+    <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', 
+    position: 'relative' }}>
       <button
         onClick={onToggleWishlist}
         style={{
@@ -41,7 +42,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
         <div style={{ fontWeight: 600 }}>{product.name}</div>
         <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{product.category}</div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-          <span style={{ fontWeight: 700 }}>${product.price.toFixed(2)}</span>
+          <span style={{ fontWeight: 700 }}>₹{product.price.toFixed(2)}</span>
           
           {!product.inStock && <span style={{ fontSize: 12, color: 'crimson' }}>Out of stock</span>}
         </div>
@@ -119,14 +120,6 @@ if (loading) {
     if (error) {
         return <p>Error fetching users: {error}</p>;
     }
-
-  const DEMO_PRODUCTS = [
-    { id: 1, name: 'Fresh Apples', category: 'Fruits', price: 2.99, rating: 4.5, inStock: true, image: '/grocery1.jpg' },
-    { id: 2, name: 'Whole Milk', category: 'Dairy', price: 3.49, rating: 4.2, inStock: true, image: '/grocery2.jpg' },
-    { id: 3, name: 'Brown Bread', category: 'Bakery', price: 1.99, rating: 3.9, inStock: false, image: '/grocery3.jpg' },
-    { id: 4, name: 'Spinach Bunch', category: 'Vegetables', price: 1.49, rating: 4.7, inStock: true, image: '/grocery4.png' },
-    { id: 5, name: 'Cheddar Cheese', category: 'Dairy', price: 4.99, rating: 4.3, inStock: true, image: '/_veggie.png' },
-  ];
 
   function toggleWishlist(productId) {
     setWishlistIds(prev =>

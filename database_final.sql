@@ -129,7 +129,7 @@ VALUES
 ('Tomato', 30.00, 'https://images-prod.healthline.com/hlcmsresource/images/AN_images/tomatoes-1296x728-feature.jpg', 100, 1),
 ('Onion', 25.00, 'https://thumbs.dreamstime.com/b/pile-red-onions-background-heads-im-market-132370194.jpg', 120, 1),
 ('Spinach', 20.00, 'https://tse4.mm.bing.net/th/id/OIP.smwnzgY1bOPNdwFTx8DlGwHaJB?rs=1&pid=ImgDetMain&o=7&rm=3', 80, 1),
-('Cow Milk (1L)', 45.00, 'https://tse1.mm.bing.net/th/id/OIP.U4e60_zJ31kY2zP7i7S7zAHaHa?rs=1&pid=ImgDetMain', 50, 2),
+('Cow Milk (1L)', 45.00, 'https://unsplash.com/photos/itambe-natural-milk-carton-dxb_HSjoQ40.jpn', 50, 2),
 ('Paneer (500g)', 200.00, 'https://tse3.mm.bing.net/th/id/OIP.IeH0F_U74S0P-F8m2y_r7gHaHa?rs=1&pid=ImgDetMain', 30, 2),
 ('Buttermilk (500ml)', 30.00, 'https://tse1.mm.bing.net/th/id/OIP.y-m3J9oG1J3y6gV8e9Lw5gHaE8?rs=1&pid=ImgDetMain', 40, 2),
 ('Green Gram (Moong)', 60.00, 'https://tse1.mm.bing.net/th/id/OIP.dI-5jO1Y5s7l9k7l2l5r1wHaE8?rs=1&pid=ImgDetMain', 60, 3),
