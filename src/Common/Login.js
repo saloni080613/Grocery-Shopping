@@ -1,19 +1,54 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Login() {
   const [userName, setuserName] = useState("");
   const [password, setpassword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-    const [userIs, setuserIs] = useState("customer");
-    
+  const [userIs, setuserIs] = useState("customer");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Username:", userName);
-    console.log("Password:", password);
-       console.log("UserIs:", userIs);
-    
+
+    const loginRequest = {
+      email: userName,
+      password: password,
+      role: userIs,
+    };
+
+    try {
+      // I've left a placeholder for your API endpoint here
+      const response = await fetch('/api/auth/login', { // TODO: Add your API endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginRequest),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        const { id } = responseData;
+
+        if (userIs === 'customer') {
+          navigate(`/?customerId=${id}`);
+        } else if (userIs === 'admin') {
+          navigate(`/Adminpanel?adminId=${id}`);
+        }
+      } else {
+        const errorText = await response.text();
+        if (errorText === 'invalid credential') {
+          alert('Invalid credentials. Please try again.');
+        } else {
+          alert(`Login failed: ${errorText}`);
+        }
+      }
+    } catch (error) {
+      console.error('An error occurred during login:', error);
+      alert('An error occurred. Please try again later.');
+    }
   };
   return (
     <div>
