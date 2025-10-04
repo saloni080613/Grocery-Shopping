@@ -115,9 +115,8 @@ export default function Search() {
   const [categories_name, setCategories] = useState([]);
 
   const [loading, setLoading] = useState(true); // To show a loading message
-     const [error, setError] = useState(null); 
- 
-     useEffect(() => {
+  const [error, setError] = useState(null); 
+    useEffect(() => {
      
      const fetchUsers = async () => {
          try {
@@ -137,9 +136,9 @@ export default function Search() {
          }
      };
      fetchUsers(); 
- }, []);
+}, []);
 
- useEffect(() => {
+useEffect(() => {
      
      const fetchUsers = async () => {
          try {
@@ -159,7 +158,7 @@ export default function Search() {
          }
      };
      fetchUsers(); 
- }, []);
+}, []);
 
 
 
@@ -180,7 +179,7 @@ export default function Search() {
         ? true
         : selectedCategories.includes(p.category);
       const matchesPrice = p.price >= minP && p.price <= maxP;
-     
+    
       const matchesStock = inStockOnly ? p.inStock : true;
 
       return matchesQuery && matchesCat && matchesPrice  && matchesStock;

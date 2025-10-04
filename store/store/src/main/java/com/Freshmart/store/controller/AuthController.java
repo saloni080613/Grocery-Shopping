@@ -1,7 +1,7 @@
 package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.RegisterRequest;
-import com.Freshmart.store.model.Customers; // Importing your 'Customers' class
+import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +17,35 @@ public class AuthController {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @PostMapping("/register")
+    @PostMapping("/customer")
     public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequest registerRequest) {
 
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Error: Passwords do not match!");
+        // --- VALIDATION LOGIC START ---
+
+        // 1. Check if the email is already in use
+        if (customerRepository.existsByEmail(registerRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Email is already in use!");
         }
 
-        // Creating an instance of YOUR 'Customers' class
-        Customers newCustomer = new Customers();
+        // 2. Check if the phone number is already in use
+        if (customerRepository.existsByPhone(registerRequest.getMobileNo())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Phone number is already in use!");
+        }
 
-        // Setting the fields using the setters from your 'Customers' class
+        // --- VALIDATION LOGIC END ---
+
+        // If both checks pass, create the new customer
+        Customers newCustomer = new Customers();
         newCustomer.setName(registerRequest.getUsername());
         newCustomer.setEmail(registerRequest.getEmail());
         newCustomer.setPhone(registerRequest.getMobileNo());
-        newCustomer.setPassword(registerRequest.getPassword()); // Remember to hash passwords in a real app
-        newCustomer.setStatus("logged_out"); // We set the default status here
+        newCustomer.setPassword(registerRequest.getPassword());
+        newCustomer.setStatus("logged_out");
 
-        // Saving the new customer
         Customers savedCustomer = customerRepository.save(newCustomer);
 
         return ResponseEntity.ok(savedCustomer);
