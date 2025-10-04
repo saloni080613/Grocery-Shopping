@@ -28,8 +28,9 @@ public class AuthController {
     private AdminRepository adminRepository;
 
     // The /register method remains unchanged
-    @PostMapping("/customer")
+    @PostMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequest registerRequest) {
+        // ... (registration code is the same)
         if (customerRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
@@ -48,7 +49,6 @@ public class AuthController {
         return ResponseEntity.ok(savedCustomer);
     }
 
-    // --- THIS IS THE UPDATED /login METHOD ---
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         String role = loginRequest.getRole();
@@ -60,16 +60,21 @@ public class AuthController {
             if (customerOptional.isPresent()) {
                 Customers customer = customerOptional.get();
                 if (password.equals(customer.getPassword())) {
-                    // --- CHANGE START ---
-                    // Create a response object (Map) to return as JSON
+
+                    // --- NEW ---
+                    // 1. Set the status to "logged_in"
+                    customer.setStatus("logged_in");
+                    // 2. Save the updated customer back to the database
+                    customerRepository.save(customer);
+                    // --- END NEW ---
+
                     Map<String, Object> response = new HashMap<>();
                     response.put("message", "Customer login successful!");
-                    response.put("userId", customer.getCustomerId()); // Use the getter from your Customers class
+                    response.put("userId", customer.getCustomerId());
                     response.put("userName", customer.getName());
                     response.put("role", "Customer");
 
                     return ResponseEntity.ok(response);
-                    // --- CHANGE END ---
                 }
             }
         } else if ("Admin".equalsIgnoreCase(role)) {
@@ -77,16 +82,21 @@ public class AuthController {
             if (adminOptional.isPresent()) {
                 Admins admin = adminOptional.get();
                 if (password.equals(admin.getPassword())) {
-                    // --- CHANGE START ---
-                    // Create a response object (Map) for the admin
+
+                    // --- NEW ---
+                    // 1. Set the status to "logged_in"
+                    admin.setStatus("logged_in");
+                    // 2. Save the updated admin back to the database
+                    adminRepository.save(admin);
+                    // --- END NEW ---
+
                     Map<String, Object> response = new HashMap<>();
                     response.put("message", "Admin login successful!");
-                    response.put("userId", admin.getAdminId()); // Use the getter from your Admins class
+                    response.put("userId", admin.getAdminId());
                     response.put("userName", admin.getName());
                     response.put("role", "Admin");
 
                     return ResponseEntity.ok(response);
-                    // --- CHANGE END ---
                 }
             }
         }
