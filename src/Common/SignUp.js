@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const [userName, setuserName] = useState("");
@@ -8,6 +8,7 @@ export default function SignUp() {
   const [password, setpassword] = useState("");
   const [C_password, setC_password] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
 
   const handleSubmit = async (e) => {
@@ -25,8 +26,37 @@ export default function SignUp() {
     console.log("Password:", password);
     console.log("Confirm Password:", C_password);
     console.log("role : Customer");
-  
+  const registerRequest = {
+      username: userName,
+      email: email,
+      mobileNo: phoneNo,
+      password: password,
+    };
+    try {
+      const response = await fetch('/api/auth/customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerRequest),
+      });
+if (response.ok) {
+        const savedCustomer = await response.json();
+        console.log('Registration successful:', savedCustomer);
+        alert('Registration successful! You can now log in.');
+        navigate('/Login');
+      } else {
+        const errorMessage = await response.text();
+        console.error('Registration failed:', errorMessage);
+        alert(`Registration Failed: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred during registration. Please try again.');
+    }
   };
+
+ 
 
   return (
       <div className="container">
@@ -130,7 +160,7 @@ export default function SignUp() {
                 Register Now
               </button>
               <div className="text-start text-small">
-                alreday have an account?{" "}
+                already have an account?{" "}
                 <Link to="/Login" style={{ color: "#0da308" }}>
                   login now
                 </Link>
