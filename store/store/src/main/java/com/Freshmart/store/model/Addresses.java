@@ -2,6 +2,8 @@ package com.Freshmart.store.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +18,8 @@ public class Addresses {
     @Column(name = "address_id")
     private Integer addressId;
 
-    @Column(name = "customer_id")
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customers customer;
 
     @Column(name = "street", nullable = false, length = 255)

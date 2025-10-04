@@ -1,23 +1,23 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
-const DEMO_PRODUCTS = [
-  { id: 1, name: 'Fresh Apples', category: 'Fruits', price: 2.99, inStock: true, image: '/grocery1.jpg' },
-  { id: 2, name: 'Whole Milk', category: 'Dairy', price: 3.49, inStock: true, image: '/grocery2.jpg' },
-  { id: 3, name: 'Brown Bread', category: 'Bakery', price: 1.99, inStock: false, image: '/grocery3.jpg' },
-  { id: 4, name: 'Spinach Bunch', category: 'Vegetables', price: 1.49, inStock: true, image: '/grocery4.png' },
-  { id: 5, name: 'Cheddar Cheese', category: 'Dairy', price: 4.99, inStock: true, image: '/_veggie.png' },
-];
+// const DEMO_PRODUCTS = [
+//   { id: 1, name: 'Fresh Apples', category: 'Fruits', price: 2.99, inStock: true, image: '/grocery1.jpg' },
+//   { id: 2, name: 'Whole Milk', category: 'Dairy', price: 3.49, inStock: true, image: '/grocery2.jpg' },
+//   { id: 3, name: 'Brown Bread', category: 'Bakery', price: 1.99, inStock: false, image: '/grocery3.jpg' },
+//   { id: 4, name: 'Spinach Bunch', category: 'Vegetables', price: 1.49, inStock: true, image: '/grocery4.png' },
+//   { id: 5, name: 'Cheddar Cheese', category: 'Dairy', price: 4.99, inStock: true, image: '/_veggie.png' },
+// ];
 
-// Demo categories array to mirror future Categories table
-const DEMO_CATEGORIES = [
-  'Fruits',
-  'Dairy',
-  'Bakery',
-  'Vegetables',
-];
+// // Demo categories array to mirror future Categories table
+// const DEMO_CATEGORIES = [
+//   'Fruits',
+//   'Dairy',
+//   'Bakery',
+//   'Vegetables',
+// ];
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
   return (
@@ -111,16 +111,68 @@ export default function Search() {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('relevance'); // 'name-asc' | 'price-asc' | 'price-desc' | 'rating-desc'
   const [wishlistIds, setWishlistIds] = useState([]);
+    const [products, setProducts] = useState([]);
+  const [categories_name, setCategories] = useState([]);
 
-  // Source categories from demo table (replace with API/DB later)
-  const categories = DEMO_CATEGORIES;
+  const [loading, setLoading] = useState(true); // To show a loading message
+     const [error, setError] = useState(null); 
+ 
+     useEffect(() => {
+     
+     const fetchUsers = async () => {
+         try {
+             const response = await fetch('/api/products/list');
+             
+            
+             if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+             }
+ 
+             const data = await response.json();
+             setProducts(data); 
+         } catch (e) {
+             setError(e.message); 
+         } finally {
+             setLoading(false); 
+         }
+     };
+     fetchUsers(); 
+ }, []);
+
+ useEffect(() => {
+     
+     const fetchUsers = async () => {
+         try {
+             const response = await fetch('/api/categories/name');
+             
+            
+             if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+             }
+ 
+             const data = await response.json();
+             setCategories(data); 
+         } catch (e) {
+             setError(e.message); 
+         } finally {
+             setLoading(false); 
+         }
+     };
+     fetchUsers(); 
+ }, []);
+
+
+
+
+  const categories = categories_name;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+
     const minP = priceMin === '' ? Number.NEGATIVE_INFINITY : Number(priceMin);
     const maxP = priceMax === '' ? Number.POSITIVE_INFINITY : Number(priceMax);
     
-    let items = DEMO_PRODUCTS.filter(p => {
+    let items = products.filter(p => {
       const matchesQuery = q.length === 0
         ? true
         : (p.name + ' ' + p.category).toLowerCase().includes(q);
@@ -157,6 +209,15 @@ export default function Search() {
     return items;
   }, [query, selectedCategories, priceMin, priceMax, inStockOnly, sortBy]);
 
+ 
+  if (loading) {
+        return <p>Loading users...</p>;
+    }
+
+    if (error) {
+        return <p>Error fetching users: {error}</p>;
+    }
+
   function toggleCategory(cat) {
     setSelectedCategories(prev =>
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
@@ -179,6 +240,8 @@ export default function Search() {
     // Navigate to Order page with product id as query param
     navigate(`/Order?productId=${product.id}`);
   }
+
+   
 
   return (
     <section style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 16, padding: 16 }}>

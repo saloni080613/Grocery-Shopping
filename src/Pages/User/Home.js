@@ -95,7 +95,7 @@ export default function Home() {
     
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:8080/products/list');
+            const response = await fetch('/api/products/list');
             
            
             if (!response.ok) {

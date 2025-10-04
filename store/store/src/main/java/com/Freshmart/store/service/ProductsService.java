@@ -2,13 +2,19 @@ package com.Freshmart.store.service;
 
 import com.Freshmart.store.dto.NewProduct;
 import com.Freshmart.store.repository.ProductsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Scanner;
+import java.util.stream.Collectors;
 @Service
 public class ProductsService {
-    private ProductsRepository productsRepository;
+    private final ProductsRepository productsRepository;
+
+    @Autowired
+    public ProductsService(ProductsRepository productsRepository) {
+        this.productsRepository = productsRepository;
+    }
 
     public List<NewProduct> getProductsList() {
         return productsRepository.findAll().stream()
@@ -25,11 +31,12 @@ public class ProductsService {
 
                     newProd.setInStock(original.getStockQuantity() > 0);
 
-
-                    newProd.setCategory(original.getCategory().getCategoryName());
+                    if (original.getCategory() != null) {
+                        newProd.setCategory(original.getCategory().getCategoryName());
+                    }
 
                     return newProd;
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 }
