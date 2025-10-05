@@ -24,7 +24,12 @@ public class Wishlist {
     @JoinColumn(name = "product_id")
     private Products product;
 
-    public Wishlist() {}
+
+public Wishlist() {}
+    public Wishlist(Customers customerId, Products productId) {
+        this.customer = customerId;
+        this.product = productId;
+    }
 
     public Long getId() {
         return id;

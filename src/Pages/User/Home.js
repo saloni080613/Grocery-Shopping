@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
@@ -86,6 +86,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
 }
 
 export default function Home() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [wishlistIds, setWishlistIds] = useState([]);
   const [PRODUCTS, setPRODUCTS] = useState([]); // To store the list of users
@@ -121,15 +122,86 @@ if (loading) {
         return <p>Error fetching users: {error}</p>;
     }
 
-  function toggleWishlist(productId) {
+  const toggleWishlist = async (productId) => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+
+    if (!customerId) {
+      alert("Please log in to modify your wishlist.");
+      navigate("/Login");
+      return;
+    }
+
+    // Optimistically update the UI
+    const isWishlisted = wishlistIds.includes(productId);
     setWishlistIds(prev =>
-      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+      isWishlisted ? prev.filter(id => id !== productId) : [...prev, productId]
     );
+
+    const wishlistRequest = {
+      customerId: parseInt(customerId),
+      productId: productId,
+    };
+
+    try {
+      const response = await fetch('/api/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(wishlistRequest),
+      });
+
+      if (response.ok){
+alert(`added to your wishlist!`);
+      }else {
+        // Revert UI change on error
+        setWishlistIds(prev => isWishlisted ? [...prev, productId] : prev.filter(id => id !== productId));
+        const errorText = await response.text();
+        alert(`Failed to update wishlist: ${errorText}`);
+      }
+    } catch (error) {
+      // Revert UI change on error
+      setWishlistIds(prev => isWishlisted ? [...prev, productId] : prev.filter(id => id !== productId));
+      console.error('An error occurred while toggling wishlist:', error);
+      alert('An error occurred. Please try again later.');
+    }
   }
 
-  function handleAddToCart(product) {
-    // Replace with actual cart logic/integration later
-    console.log('Add to cart:', product);
+  const handleAddToCart = async (product) => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+
+    if (!customerId) {
+      alert("Please log in to add items to your cart.");
+      navigate("/Login");
+      return;
+    }
+
+    const addToCartRequest = {
+      customerId: parseInt(customerId),
+      productId: product.id,
+    };
+
+    try {
+      const response = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(addToCartRequest),
+      });
+
+      if (response.ok) {
+        alert(`${product.name} has been added to your cart!`);
+      } else {
+        const errorText = await response.text();
+        alert(`Failed to add to cart: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred while adding to cart:', error);
+      alert('An error occurred. Please try again later.');
+    }
   }
 
   function handleOrderNow(product) {
