@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { PiShoppingCartBold } from "react-icons/pi";
 import { IoHeart, IoSearch, IoMenu, IoClose } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [userState, setUserState] = useState(false);
 
-  // const [userState, setuserState] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("UserState:", userState);
-   
-  // };
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has("customerId")) {
+      setUserState(true);
+    } else {
+      setUserState(false);
+    }
+  }, [location]);
 
   return (
     <div>
@@ -100,50 +105,43 @@ export default function Navbar() {
                   <BsFillPersonFill />
                 </button>
                 <ul className={`dropdown-menu   ${isOpen ? "show" : ""}`}>
-                  {/* {userState && (
-                    <li
-                      onClick={() => {
-                        setIsOpen(false);
-                        setuserState(false);
-                      
-                      }}
-                    >
-                      <Link className="dropdown-item " to="/Login">
-                        Log out
-                      </Link>
-                    </li>
-                  )} */}
-                  
+                  {userState ? (
                     <>
                       <li
                         onClick={() => {
                           setIsOpen(false);
                         }}
                       >
-                        <Link className="dropdown-item " to="/Login">
-                          Login
+                        <Link className="dropdown-item" to="/Account">
+                          My Account
                         </Link>
                       </li>
                       <li
                         onClick={() => {
                           setIsOpen(false);
+                          setUserState(false);
+                          navigate("/Login");
                         }}
                       >
+                        <a className="dropdown-item" href="#logout">
+                          Log out
+                        </a>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li onClick={() => setIsOpen(false)}>
+                        <Link className="dropdown-item" to="/Login">
+                          Login
+                        </Link>
+                      </li>
+                      <li onClick={() => setIsOpen(false)}>
                         <Link className="dropdown-item" to="/SignUp">
                           Sign Up
                         </Link>
                       </li>
                     </>
-                 
-                  <li
-                    onClick={() => {
-                      setIsOpen(false);
-                    }}
-                  >
-                    <Link className="dropdown-item" to="/Account">
-                      My Account
-                    </Link>
-                  </li>
+                  )}
                 </ul>
               </div>
             </div>
