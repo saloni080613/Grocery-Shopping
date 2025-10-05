@@ -152,7 +152,9 @@ if (loading) {
         body: JSON.stringify(wishlistRequest),
       });
 
-      if (!response.ok) {
+      if (response.ok){
+alert(`added to your wishlist!`);
+      }else {
         // Revert UI change on error
         setWishlistIds(prev => isWishlisted ? [...prev, productId] : prev.filter(id => id !== productId));
         const errorText = await response.text();
