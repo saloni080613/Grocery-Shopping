@@ -11,6 +11,7 @@ import com.Freshmart.store.repository.WishlistRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +46,8 @@ public class WishlistService {
             wishlistRepository.save(newWishlist);
             return "Added to wishlist";
         }
+    }
+    public List<Long> getProductIdsByCustomerId(Long customerId) {
+        return wishlistRepository.findProductIdsByCustomerId(customerId);
     }
 }
