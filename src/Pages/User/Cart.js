@@ -42,7 +42,7 @@ export default function Cart() {
   }
 
   function handleOrderNow(product) {
-    navigate(`/Order?productId=${product.id}`);
+    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
   }
 
   function ProductCard({ product }) {

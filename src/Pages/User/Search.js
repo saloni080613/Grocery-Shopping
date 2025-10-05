@@ -1,6 +1,6 @@
 
-import React, { useMemo, useState , useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation, } from 'react-router-dom';
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 
 
@@ -89,6 +89,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
 }
 
 export default function Search() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -105,16 +106,42 @@ export default function Search() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- 
+  const fetchWishlist = useCallback(async () => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+
+    if (customerId) {
+      try {
+        const response = await fetch(`/api/wishlist/products?customerId=${customerId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setWishlistIds(data);
+        } else {
+          setWishlistIds([]);
+        }
+      } catch (e) {
+        console.error("Failed to fetch wishlist:", e.message);
+        setWishlistIds([]);
+      }
+    } else {
+      setWishlistIds([]);
+    }
+  }, [location.search]);
+
   // This single useEffect handles all initial data loading.
   useEffect(() => {
     const fetchData = async () => {
       try {
-       
-        const [productsResponse, categoriesResponse] = await Promise.all([
+        const fetchPromises = [
           fetch('/api/products/list'),
-          fetch('/api/categories/name')
-        ]);
+          fetch('/api/categories/name'),
+        ];
+
+        const [productsResponse, categoriesResponse] = await Promise.all(fetchPromises);
+
    if (!productsResponse.ok) {
           throw new Error(`HTTP error! status: ${productsResponse.status}`);
         }
@@ -135,8 +162,9 @@ export default function Search() {
       }
     };
 
-    fetchData();
-  }, []);
+    fetchData(); // Fetch products and categories
+    fetchWishlist(); // Fetch wishlist
+  }, [location.search, fetchWishlist]);
 
 
 
@@ -183,7 +211,7 @@ export default function Search() {
     }
 
     return items;
-  }, [products,query, selectedCategories, priceMin, priceMax, inStockOnly, sortBy]);
+  }, [products, query, selectedCategories, priceMin, priceMax, inStockOnly, sortBy]);
 
  
   if (loading) {
@@ -200,20 +228,85 @@ export default function Search() {
     );
   }
 
-  function toggleWishlist(productId) {
-    setWishlistIds(prev =>
-      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
-    );
+  const toggleWishlist = async (productId) => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+
+    if (!customerId) {
+      alert("Please log in to modify your wishlist.");
+      navigate("/Login");
+      return;
+    }
+
+    const wishlistRequest = {
+      customerId: parseInt(customerId),
+      productId: productId,
+    };
+
+    try {
+      const response = await fetch('/api/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(wishlistRequest),
+      });
+
+      if (response.ok){
+        const message = await response.text();
+        alert(message);
+        await fetchWishlist(); // Refetch wishlist from server
+      }
+      else {
+        const errorText = await response.text();
+        alert(`Failed to update wishlist: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred while toggling wishlist:', error);
+      alert('An error occurred. Please try again later.');
+    }
   }
 
-  function handleAddToCart(product) {
-   
-    console.log('Add to cart:', product);
-  }
+  const handleAddToCart = async (product) => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+
+    if (!customerId) {
+      alert("Please log in to add items to your cart.");
+      navigate("/Login");
+      return;
+    }
+
+    const addToCartRequest = {
+      customerId: parseInt(customerId),
+      productId: product.id,
+    };
+
+    try {
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addToCartRequest),
+      });
+
+      if (response.ok) {
+        alert(`${product.name} has been added to your cart!`);
+      } else {
+        const errorText = await response.text();
+        alert(`Failed to add to cart: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("An error occurred while adding to cart:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  };
 
   function handleOrderNow(product) {
-   
-    navigate(`/Order?productId=${product.id}`);
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
+    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
   }
 
    

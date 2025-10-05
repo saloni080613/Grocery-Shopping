@@ -23,16 +23,9 @@ public class WishlistController {
         String message = wishlistService.toggleWishlist(request);
         return ResponseEntity.ok(message);
     }
-    @PutMapping("/products")
+    @GetMapping("/products")
     public ResponseEntity<?> getWishlistProductIds(@RequestParam Long customerId) {
         List<Long> productIds = wishlistService.getProductIdsByCustomerId(customerId);
-
-        if (productIds.isEmpty()) {
-            // Return a message instead of an empty array
-            return ResponseEntity.ok("You have not added any products in your wishlist.");
-        }
-
         return ResponseEntity.ok(productIds);
     }
 }
-
