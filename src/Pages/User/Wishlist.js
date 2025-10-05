@@ -23,14 +23,48 @@ export default function Wishlist() {
     setWishlistIds(prev => prev.filter(id => id !== productId))
   }
 
-  function handleAddToCart(product) {
-    // Replace with real cart logic later
-    // eslint-disable-next-line no-console
-    console.log('Add to cart from wishlist:', product)
-  }
+  const handleAddToCart = async (product) => {
+    if (!customerId) {
+      alert("Please log in to add items to your cart.");
+      navigate("/Login");
+      return;
+    }
+
+    const addToCartRequest = {
+      customerId: parseInt(customerId),
+      productId: product.id,
+    };
+
+    try {
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addToCartRequest),
+      });
+
+      if (response.ok) {
+        alert(`${product.name} has been added to your cart!`);
+      } else {
+        const errorText = await response.text();
+        alert(`Failed to add to cart: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("An error occurred while adding to cart:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  };
 
   function handleOrderNow(product) {
-    navigate(`/Order?productId=${product.id}`)
+    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
+  }
+
+  // This logic should be replaced with a backend call
+  const products = DEMO_PRODUCTS.filter(p => wishlistIds.includes(p.id))
+
+  if (!customerId) {
+    return <p>Please log in to see your wishlist.</p>;
   }
 
   function ProductCard({ product }) {
@@ -112,8 +146,6 @@ export default function Wishlist() {
       </article>
     )
   }
-
-  const products = DEMO_PRODUCTS.filter(p => wishlistIds.includes(p.id))
 
   return (
     <section style={{ padding: 16 }}>

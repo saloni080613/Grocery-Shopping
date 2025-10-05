@@ -1,6 +1,7 @@
 package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.AddToCartRequest;
+import com.Freshmart.store.dto.UpdateCartRequest;
 import com.Freshmart.store.dto.CartItemResponse;
 import com.Freshmart.store.model.Cart;
 import com.Freshmart.store.model.Customers;
@@ -9,6 +10,7 @@ import com.Freshmart.store.repository.CartRepository;
 import com.Freshmart.store.repository.CustomerRepository;
 import com.Freshmart.store.repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,11 +62,7 @@ public class CartController {
         return ResponseEntity.ok("Product added to cart successfully!");
     }
 
-    // ... (imports and other methods in the class remain the same)
 
-
-
-        // ... (your Autowired repositories and the /add endpoint are unchanged)
 
         @GetMapping("/{customerId}")
         public ResponseEntity<List<CartItemResponse>> getCartItems(@PathVariable Integer customerId) {
@@ -98,4 +96,47 @@ public class CartController {
 
             return ResponseEntity.ok(responseList);
         }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateCartQuantity(@RequestBody UpdateCartRequest request) {
+        Optional<Customers> customerOpt = customerRepository.findById(request.getCustomerId());
+        if (customerOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Customer not found");
+        }
+
+        Optional<Products> productOpt = productsRepository.findById(request.getProductId());
+        if (productOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Product not found");
+        }
+
+        Optional<Cart> cartItemOpt = cartRepository.findByCustomerAndProduct(customerOpt.get(), productOpt.get());
+
+        if (cartItemOpt.isPresent()) {
+            Cart cartItem = cartItemOpt.get();
+            if (request.getQuantity() > 0) {
+                cartItem.setQuantity(request.getQuantity());
+                cartRepository.save(cartItem);
+                return ResponseEntity.ok("Cart updated successfully");
+            } else {
+                // If quantity is 0 or less, remove the item
+                cartRepository.delete(cartItem);
+                return ResponseEntity.ok("Item removed from cart");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not in cart");
+        }
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> removeFromCart(@RequestParam Integer customerId, @RequestParam Integer productId) {
+        Optional<Customers> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isEmpty()) return ResponseEntity.badRequest().body("Customer not found");
+
+        Optional<Products> productOpt = productsRepository.findById(productId);
+        if (productOpt.isEmpty()) return ResponseEntity.badRequest().body("Product not found");
+
+        cartRepository.findByCustomerAndProduct(customerOpt.get(), productOpt.get()).ifPresent(cartRepository::delete);
+
+        return ResponseEntity.ok("Item removed from cart");
+    }
     }

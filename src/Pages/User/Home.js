@@ -1,64 +1,95 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { IoHeart, IoHeartOutline } from 'react-icons/io5';
+import React, { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate, useLocation, } from "react-router-dom";
+import { IoHeart, IoHeartOutline } from "react-icons/io5";
 
-function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
+function ProductCard({
+  product,
+  wishlisted,
+  onToggleWishlist,
+  onAddToCart,
+  onOrderNow,
+}) {
   return (
-    <article style={{ border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', background: '#fff', 
-    position: 'relative' }}>
+    <article
+      style={{
+        border: "1px solid #eee",
+        borderRadius: 8,
+        overflow: "hidden",
+        background: "#fff",
+        position: "relative",
+      }}
+    >
       <button
         onClick={onToggleWishlist}
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 8,
           right: 8,
-          border: 'none',
-          background: 'rgba(255,255,255,0.9)',
+          border: "none",
+          background: "rgba(255,255,255,0.9)",
           borderRadius: 999,
           width: 36,
           height: 36,
-          display: 'grid',
-          placeItems: 'center',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-          cursor: 'pointer'
+          display: "grid",
+          placeItems: "center",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+          cursor: "pointer",
         }}
       >
         {wishlisted ? (
-          <IoHeart style={{ color: '#e53935', fontSize: 20 }} />
+          <IoHeart style={{ color: "#e53935", fontSize: 20 }} />
         ) : (
-          <IoHeartOutline style={{ color: '#3a3d40', fontSize: 20 }} />
+          <IoHeartOutline style={{ color: "#3a3d40", fontSize: 20 }} />
         )}
       </button>
-      <div style={{ aspectRatio: '4 / 3', background: '#f7f7f7' }}>
+      <div style={{ aspectRatio: "4 / 3", background: "#f7f7f7" }}>
         {product.image ? (
           <img
             src={product.image}
             alt={product.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : null}
       </div>
       <div style={{ padding: 12 }}>
         <div style={{ fontWeight: 600 }}>{product.name}</div>
-        <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{product.category}</div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-          <span style={{ fontWeight: 700 }}>₹{product.price.toFixed(2)}</span>
-          
-          {!product.inStock && <span style={{ fontSize: 12, color: 'crimson' }}>Out of stock</span>}
+        <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+          {product.category}
         </div>
-        <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            marginTop: 8,
+          }}
+        >
+          <span style={{ fontWeight: 700 }}>₹{product.price.toFixed(2)}</span>
+
+          {!product.inStock && (
+            <span style={{ fontSize: 12, color: "crimson" }}>Out of stock</span>
+          )}
+        </div>
+        <div
+          style={{
+            marginTop: 12,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
           <button
             onClick={onAddToCart}
             disabled={!product.inStock}
             style={{
-              background: '#0da308',
-              color: '#fff',
-              border: 'none',
-              padding: '8px 12px',
+              background: "#0da308",
+              color: "#fff",
+              border: "none",
+              padding: "8px 12px",
               borderRadius: 6,
-              cursor: product.inStock ? 'pointer' : 'not-allowed',
+              cursor: product.inStock ? "pointer" : "not-allowed",
               opacity: product.inStock ? 1 : 0.7,
-              width: '100%'
+              width: "100%",
             }}
           >
             Add to cart
@@ -67,14 +98,14 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrd
             onClick={onOrderNow}
             disabled={!product.inStock}
             style={{
-              background: '#043b0d',
-              color: '#fff',
-              border: 'none',
-              padding: '8px 12px',
+              background: "#043b0d",
+              color: "#fff",
+              border: "none",
+              padding: "8px 12px",
               borderRadius: 6,
-              cursor: product.inStock ? 'pointer' : 'not-allowed',
+              cursor: product.inStock ? "pointer" : "not-allowed",
               opacity: product.inStock ? 1 : 0.7,
-              width: '100%'
+              width: "100%",
             }}
           >
             Order now
@@ -89,38 +120,69 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const [wishlistIds, setWishlistIds] = useState([]);
-  const [PRODUCTS, setPRODUCTS] = useState([]); // To store the list of users
-    const [loading, setLoading] = useState(true); // To show a loading message
-    const [error, setError] = useState(null); 
+  const [PRODUCTS, setPRODUCTS] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-    
-    const fetchUsers = async () => {
-        try {
-            const response = await fetch('/api/products/list');
-            
-           
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+  const fetchWishlist = useCallback(async () => {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
 
-            const data = await response.json();
-            setPRODUCTS(data); 
-        } catch (e) {
-            setError(e.message); 
-        } finally {
-            setLoading(false); 
+    if (customerId) {
+      try {
+        const response = await fetch(
+          `/api/wishlist/products?customerId=${customerId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-    };
-    fetchUsers(); 
-}, []); 
-if (loading) {
-        return <p>Loading users...</p>;
+        const data = await response.json();
+        // The backend might return a string message if the wishlist is empty
+        if (Array.isArray(data)) {
+          setWishlistIds(data);
+        } else {
+          setWishlistIds([]);
+        }
+      } catch (e) {
+        console.error("Failed to fetch wishlist:", e.message);
+        // On failure, ensure the wishlist is cleared to avoid stale data
+        setWishlistIds([]);
+      }
+    } else {
+      // If there's no customer, ensure the wishlist is empty
+      setWishlistIds([]);
     }
+  }, [location.search]);
 
-    if (error) {
-        return <p>Error fetching users: {error}</p>;
-    }
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("/api/products/list");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setPRODUCTS(data);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Fetch both products and the initial wishlist
+    Promise.all([fetchUsers(), fetchWishlist()]);
+
+  }, [location.search, fetchWishlist]);
+  if (loading) {
+    return <p>Loading users...</p>;
+  }
+
+  if (error) {
+    return <p>Error fetching users: {error}</p>;
+  }
 
   const toggleWishlist = async (productId) => {
     const queryParams = new URLSearchParams(location.search);
@@ -132,41 +194,34 @@ if (loading) {
       return;
     }
 
-    // Optimistically update the UI
-    const isWishlisted = wishlistIds.includes(productId);
-    setWishlistIds(prev =>
-      isWishlisted ? prev.filter(id => id !== productId) : [...prev, productId]
-    );
-
     const wishlistRequest = {
       customerId: parseInt(customerId),
       productId: productId,
     };
 
     try {
-      const response = await fetch('/api/wishlist/toggle', {
-        method: 'POST',
+      const response = await fetch("/api/wishlist/toggle", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(wishlistRequest),
       });
 
-      if (response.ok){
-alert(`added to your wishlist!`);
-      }else {
-        // Revert UI change on error
-        setWishlistIds(prev => isWishlisted ? [...prev, productId] : prev.filter(id => id !== productId));
+      if (response.ok) {
+        const message = await response.text();
+        alert(message); // Show "Added to wishlist" or "Removed from wishlist"
+        // Refetch the wishlist to get the latest state from the database
+        await fetchWishlist();
+      } else {
         const errorText = await response.text();
         alert(`Failed to update wishlist: ${errorText}`);
       }
     } catch (error) {
-      // Revert UI change on error
-      setWishlistIds(prev => isWishlisted ? [...prev, productId] : prev.filter(id => id !== productId));
-      console.error('An error occurred while toggling wishlist:', error);
-      alert('An error occurred. Please try again later.');
+      console.error("An error occurred while toggling wishlist:", error);
+      alert("An error occurred. Please try again later.");
     }
-  }
+  };
 
   const handleAddToCart = async (product) => {
     const queryParams = new URLSearchParams(location.search);
@@ -184,10 +239,10 @@ alert(`added to your wishlist!`);
     };
 
     try {
-      const response = await fetch('/api/cart/add', {
-        method: 'POST',
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(addToCartRequest),
       });
@@ -199,20 +254,20 @@ alert(`added to your wishlist!`);
         alert(`Failed to add to cart: ${errorText}`);
       }
     } catch (error) {
-      console.error('An error occurred while adding to cart:', error);
-      alert('An error occurred. Please try again later.');
+      console.error("An error occurred while adding to cart:", error);
+      alert("An error occurred. Please try again later.");
     }
-  }
+  };
 
   function handleOrderNow(product) {
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get("customerId");
     // Navigate to Order page with product id as query param
-    navigate(`/Order?productId=${product.id}`);
+    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
   }
-
 
   return (
     <div>
-  
       <div
         className="container-fluid shadow-sm"
         style={{
@@ -225,40 +280,54 @@ alert(`added to your wishlist!`);
         <div className="row ">
           <div className="col-md-6 ">
             <div className="mt-5 ms-2">
-              <h3 className="mb-4" style={{ color: "#0da308" }}>Freshness at your doorstep</h3>
+              <h3 className="mb-4" style={{ color: "#0da308" }}>
+                Freshness at your doorstep
+              </h3>
 
               <h1 className="fw-bold mb-4" style={{ color: "#2d362f" }}>
                 shop smart, shop online.
               </h1>
 
               <p className="col-10 mb-4" style={{ color: "#3a3d40" }}>
-                <i>"Freshness and convenience, all in one place. Order your favorite
-                groceries online and have them delivered right to your doorstep.<br/>
-                Eat well, live well, and shop smart with us."</i>
+                <i>
+                  "Freshness and convenience, all in one place. Order your
+                  favorite groceries online and have them delivered right to
+                  your doorstep.
+                  <br />
+                  Eat well, live well, and shop smart with us."
+                </i>
               </p>
-              <Link to="/Search" className="btn btn-dark " >Shop Now </Link>
+              <Link to={`/Search${location.search}`} className="btn btn-dark ">
+                Shop Now{" "}
+              </Link>
             </div>
           </div>
           <div className="col-md-6"></div>
         </div>
       </div>
 
-      <div className="container-fluid py-5" style={{ background: '#f8f9fa' }}>
+      <div className="container-fluid py-5" style={{ background: "#f8f9fa" }}>
         <div className="container">
           <div className="row mb-4">
             <div className="col-12">
-              <h2 className="text-center mb-2" style={{ color: "#2d362f" }}>Featured Products</h2>
-              <p className="text-center text-muted">Discover our most popular items</p>
+              <h2 className="text-center mb-2" style={{ color: "#2d362f" }}>
+                Featured Products
+              </h2>
+              <p className="text-center text-muted">
+                Discover our most popular items
+              </p>
             </div>
           </div>
           <div className="row">
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-              gap: 16,
-              width: '100%'
-            }}>
-              {PRODUCTS.map(product => (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gap: 16,
+                width: "100%",
+              }}
+            >
+              {PRODUCTS.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}

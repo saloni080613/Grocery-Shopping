@@ -74,7 +74,7 @@ export default function Navbar() {
             <div className="ms-2">
               <div className="nav-link fs-5 mt-3 ">
                 <Link
-                  to="/"
+                  to={`/${location.search}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Home
@@ -84,7 +84,7 @@ export default function Navbar() {
             <div>
               <div className="ms-3 fs-5 mt-3 nav-link">
                 <Link
-                  to="/OrderTrack"
+                  to={`/OrderTrack${location.search}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Orders
@@ -94,7 +94,7 @@ export default function Navbar() {
             <div className="ms-3">
               <div className="nav-link fs-5 mt-3 ">
                 <Link
-                  to="/Services"
+                  to={`/Services${location.search}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Services
@@ -104,7 +104,7 @@ export default function Navbar() {
             <div className="ms-3">
               <div className="nav-link fs-5 mt-3 ">
                 <Link
-                  to="/AboutUs"
+                  to={`/AboutUs${location.search}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   About us
@@ -114,7 +114,7 @@ export default function Navbar() {
           </div>
           <div className="nav-icons d-flex me-3">
             <div className="ms-3 fs-2 mt-2 ">
-              <Link to="/Search" style={{ color: "#3a3d40" }}>
+              <Link to={`/Search${location.search}`} style={{ color: "#3a3d40" }}>
                 <IoSearch />
               </Link>
             </div>
@@ -137,7 +137,7 @@ export default function Navbar() {
                           setIsOpen(false);
                         }}
                       >
-                        <Link className="dropdown-item" to="/Account">
+                        <Link className="dropdown-item" to={`/Account${location.search}`}>
                           My Account
                         </Link>
                       </li>
@@ -147,9 +147,9 @@ export default function Navbar() {
                           handleLogout();   // Call logout handler
                         }}
                       >
-                        <a className="dropdown-item" >
+                        <div className="dropdown-item" >
                           Log out
-                        </a>
+                        </div>
                       </li>
                     </>
                   ) : (
@@ -171,12 +171,12 @@ export default function Navbar() {
             </div>
             
             <div className="ms-3 mt-2 fs-2">
-              <Link to="/Wishlist" style={{ color: "#3a3d40" }}>
+              <Link to={`/Wishlist${location.search}`} style={{ color: "#3a3d40" }}>
                 <IoHeart />
               </Link>
             </div>
             <div className="ms-3 mt-2 fs-2">
-              <Link to="/Cart" style={{ color: "#3a3d40" }}>
+              <Link to={`/Cart${location.search}`} style={{ color: "#3a3d40" }}>
                 <PiShoppingCartBold />
               </Link>
             </div>
@@ -233,7 +233,7 @@ export default function Navbar() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 8 }}>
             <li>
               <Link
-                to="/"
+                to={`/${location.search}`}
                 className="nav-link"
                 style={{ color: "#3a3d40" }}
                 onClick={() => setNavOpen(false)}
@@ -243,7 +243,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                to="/OrderTrack"
+                to={`/OrderTrack${location.search}`}
                 className="nav-link"
                 style={{ color: "#3a3d40" }}
                 onClick={() => setNavOpen(false)}
@@ -253,7 +253,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                to="/Services"
+                to={`/Services${location.search}`}
                 className="nav-link"
                 style={{ color: "#3a3d40" }}
                 onClick={() => setNavOpen(false)}
@@ -263,7 +263,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                to="/AboutUs"
+                to={`/AboutUs${location.search}`}
                 className="nav-link"
                 style={{ color: "#3a3d40" }}
                 onClick={() => setNavOpen(false)}
