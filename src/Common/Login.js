@@ -30,12 +30,12 @@ export default function Login() {
 
       if (response.ok) {
         const responseData = await response.json();
-        const { id } = responseData.role;
+        const { userId } = responseData; // Correctly get userId from the response
 
         if (userIs === 'Customer') {
-          navigate(`/?customerId=${id}`);
+          navigate(`/?customerId=${userId}`);
         } else if (userIs === 'Admin') {
-          navigate(`/Adminpanel?adminId=${id}`);
+          navigate(`/Adminpanel?adminId=${userId}`);
         }
       } else {
         const errorText = await response.text();

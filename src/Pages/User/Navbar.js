@@ -21,6 +21,31 @@ export default function Navbar() {
     }
   }, [location]);
 
+  const handleLogout = async () => {
+    const params = new URLSearchParams(location.search);
+    const customerId = params.get("customerId");
+
+    if (customerId) {
+      try {
+        const response = await fetch(`/api/auth/logout/${customerId}`, {
+          method: 'PUT',
+        });
+
+        if (response.ok) {
+          setUserState(false);
+          navigate('/');
+        } else {
+          const errorText = await response.text();
+          console.error(`Logout failed: ${errorText}`);
+          alert(`Logout failed: ${errorText}`);
+        }
+      } catch (error) {
+        console.error('An error occurred during logout:', error);
+        alert('An error occurred during logout. Please try again.');
+      }
+    }
+  };
+
   return (
     <div>
       <nav
@@ -118,12 +143,11 @@ export default function Navbar() {
                       </li>
                       <li
                         onClick={() => {
-                          setIsOpen(false);
-                          setUserState(false);
-                          navigate("/Login");
+                          setIsOpen(false); // Close dropdown
+                          handleLogout();   // Call logout handler
                         }}
                       >
-                        <a className="dropdown-item" href="#logout">
+                        <a className="dropdown-item" >
                           Log out
                         </a>
                       </li>
