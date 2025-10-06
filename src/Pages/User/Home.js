@@ -137,7 +137,7 @@ export default function Home() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        // The backend might return a string message if the wishlist is empty
+        
         if (Array.isArray(data)) {
           setWishlistIds(data);
         } else {
@@ -145,7 +145,7 @@ export default function Home() {
         }
       } catch (e) {
         console.error("Failed to fetch wishlist:", e.message);
-        // On failure, ensure the wishlist is cleared to avoid stale data
+       
         setWishlistIds([]);
       }
     } else {
@@ -200,7 +200,7 @@ export default function Home() {
     };
 
     try {
-      const response = await fetch("/api/wishlist/toggle", {
+      const response = await fetch("/api/wishlist/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
