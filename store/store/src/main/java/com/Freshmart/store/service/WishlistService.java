@@ -1,4 +1,5 @@
 package com.Freshmart.store.service;
+import com.Freshmart.store.dto.WishlistRequest;
 
 import com.Freshmart.store.dto.WishlistItemResponse;
 import com.Freshmart.store.model.Customers;
@@ -9,9 +10,11 @@ import com.Freshmart.store.repository.ProductsRepository;
 import com.Freshmart.store.repository.WishlistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WishlistService {
@@ -65,4 +68,25 @@ public class WishlistService {
         }
         return responseList;
     }
+    @Transactional
+ public String toggleWishlist(WishlistRequest request) {
+ Customers customer = customerRepository.findById(request.getCustomerId())
+ .orElseThrow(() -> new RuntimeException("Customer not found"));
+ Products product = productsRepository.findById(request.getProductId())
+ .orElseThrow(() -> new RuntimeException("Product not found"));
+ Optional<Wishlist> existing = wishlistRepository.findByCustomerAndProduct(customer, product);
+ if (existing.isPresent()) {
+ wishlistRepository.delete(existing.get());
+ return "Removed from wishlist";
+ } else {
+ Wishlist newWishlist = new Wishlist(customer, product);
+ wishlistRepository.save(newWishlist);
+ return "Added to wishlist";
+ }
+ }
+ public List<Long> getProductIdsByCustomerId(Long customerId) {
+ return wishlistRepository.findProductIdsByCustomerId(customerId);
+ }
+
+
 }

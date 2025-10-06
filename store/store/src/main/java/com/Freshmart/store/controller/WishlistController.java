@@ -2,6 +2,7 @@ package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.AddToWishlistRequest;
 import com.Freshmart.store.dto.WishlistItemResponse;
+import com.Freshmart.store.dto.WishlistRequest;
 import com.Freshmart.store.service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/wishlist")
+@CrossOrigin(origins = "*")
+
 public class WishlistController {
 
     @Autowired
@@ -35,4 +38,15 @@ public class WishlistController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+    @PostMapping("/toggle")
+ public ResponseEntity<String> toggleWishlist(@RequestBody WishlistRequest request) {
+ String message = wishlistService.toggleWishlist(request);
+ return ResponseEntity.ok(message);
+ }
+ @GetMapping("/products")
+public ResponseEntity<?> getWishlistProductIds(@RequestParam Long customerId) {
+ List<Long> productIds = wishlistService.getProductIdsByCustomerId(customerId);
+ return ResponseEntity.ok(productIds);
+ }
+
 }

@@ -23,6 +23,10 @@ public class Wishlist {
 
     // A no-argument constructor is required by JPA
     public Wishlist() {}
+    public Wishlist(Customers customerId, Products productId) {
+ this.customer = customerId;
+ this.product = productId;
+ }
 
     // --- Getters and Setters ---
     public Long getId() { return id; }

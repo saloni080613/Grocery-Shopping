@@ -200,7 +200,7 @@ export default function Home() {
     };
 
     try {
-      const response = await fetch("/api/wishlist/add", {
+      const response = await fetch("/api/wishlist/toggle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
