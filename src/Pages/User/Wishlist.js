@@ -13,9 +13,12 @@ export default function Wishlist() {
   const queryParams = new URLSearchParams(location.search);
   const customerId = queryParams.get("customerId");
 
+
+
+
   useEffect(() => {
     if (!customerId) {
-      setMessage("Please log in to see wishlist");
+      
       setLoading(false);
       return;
     }
@@ -63,6 +66,13 @@ export default function Wishlist() {
       console.error("Error removing product:", error);
     }
   };
+   if (!customerId) {
+    return <div style={{ background: '#fff', padding: '24px', borderRadius: 8, textAlign: 'center' }}>
+          <button onClick={() => navigate(`/login`)} className="btn btn-dark">
+            please login to continue
+          </button>
+        </div>;
+  }
 
   if (loading)
     return (

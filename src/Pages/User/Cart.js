@@ -12,7 +12,7 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // State to track screen size for responsive layout
+  
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
   useEffect(() => {
@@ -103,7 +103,12 @@ export default function Cart() {
   const total = subtotal + shipping;
 
   if (!customerId) {
-    return <div style={{ padding: 16 }}><p>Please log in to see your cart.</p></div>;
+    return <div style={{ background: '#fff', padding: '24px', borderRadius: 8, textAlign: 'center' }}>
+      <p>To access cart, please login first.</p>
+          <button onClick={() => navigate(`/login`)} className="btn btn-dark">
+            please login to continue
+          </button>
+        </div>;
   }
 
   if (loading) {
