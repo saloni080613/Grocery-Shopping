@@ -177,7 +177,7 @@ export default function Home() {
 
   }, [location.search, fetchWishlist]);
   if (loading) {
-    return <p>Loading users...</p>;
+    return <p>Loading...</p>;
   }
 
   if (error) {
@@ -190,7 +190,7 @@ export default function Home() {
 
     if (!customerId) {
       alert("Please log in to modify your wishlist.");
-      navigate("/Login");
+      
       return;
     }
 
@@ -229,7 +229,7 @@ export default function Home() {
 
     if (!customerId) {
       alert("Please log in to add items to your cart.");
-      navigate("/Login");
+     
       return;
     }
 
@@ -313,9 +313,7 @@ export default function Home() {
               <h2 className="text-center mb-2" style={{ color: "#2d362f" }}>
                 Featured Products
               </h2>
-              <p className="text-center text-muted">
-                Discover our most popular items
-              </p>
+              
             </div>
           </div>
           <div className="row">
