@@ -6,12 +6,10 @@ import com.Freshmart.store.model.Admins;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AdminRepository;
 import com.Freshmart.store.repository.CustomerRepository;
+import com.Freshmart.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +21,9 @@ public class AuthController {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
     private AdminRepository adminRepository;
@@ -119,5 +120,11 @@ public class AuthController {
         }
 
         return ResponseEntity.status(401).body("Invalid credentials");
+    }
+
+    @PutMapping("/logout/{customerId}")
+    public ResponseEntity<Customers> logoutCustomer(@PathVariable Integer customerId) {
+        Customers updatedCustomer = customerService.logoutCustomer(customerId);
+        return ResponseEntity.ok(updatedCustomer);
     }
 }
