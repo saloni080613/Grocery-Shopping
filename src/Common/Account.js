@@ -33,7 +33,7 @@ export default function Account() {
     const fetchAccountDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/account/${customerId}`);
+        const response = await fetch(`/api/customers/${customerId}`);
         if (!response.ok) {
           throw new Error(
             `Failed to fetch account details: ${response.statusText}`
