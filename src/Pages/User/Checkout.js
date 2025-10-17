@@ -147,10 +147,12 @@ export default function Checkout() {
             <Card className="shadow-sm border-0">
               <Card.Body className="p-4">
                 <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Customer Details</h4>
-                <Row>
-                  <Col md={4}><Form.Label>Username:</Form.Label> <p className="fw-light">{customer.username}</p></Col>
-                  <Col md={4}><Form.Label>Email:</Form.Label> <p className="fw-light">{customer.email}</p></Col>
+                <Row className="mb-2">
+                  <Col md={8}><Form.Label>Username:</Form.Label> <p className="fw-light">{customer.username}</p></Col>
                   <Col md={4}><Form.Label>Phone:</Form.Label> <p className="fw-light">{customer.phone}</p></Col>
+                </Row>
+                <Row>
+                  <Col><Form.Label>Email:</Form.Label> <p className="fw-light">{customer.email}</p></Col>
                 </Row>
                 <hr />
                 <h5 className="mb-3 fs-6">Shipping Address</h5>
@@ -205,4 +207,3 @@ export default function Checkout() {
     </section>
   );
 }
-

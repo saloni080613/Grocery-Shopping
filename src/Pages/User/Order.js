@@ -14,42 +14,6 @@ import {
 import { IoAdd, IoRemove } from "react-icons/io5";
 import toast from "react-hot-toast";
 
-const mockProduct = {
-  id: 1,
-  name: "Fresh Tomato",
-  category_name: "Vegetables",
-  price: 30.00,
-  image_url: "https://images-prod.healthline.com/hlcmsresource/images/AN_images/tomatoes-1296x728-feature.jpg",
-  stock_quantity: 50,
-};
-
-const mockCustomer = {
-  id: 1,
-  username: "Salonee",
-  email: "salonee@example.com",
-  phone: "123-456-7890",
-  addresses: [
-    {
-      type: "Home",
-      street: "123 Green Valley",
-      city: "Pune",
-      state: "Maharashtra",
-      postal_code: "411001",
-      country: "India",
-      landmark: "Near FreshMart",
-    },
-    {
-      type: "Office",
-      street: "456 Business Park",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postal_code: "400051",
-      country: "India",
-      landmark: "Opposite Central Mall",
-    },
-  ],
-};
-
 export default function Order() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -66,36 +30,58 @@ export default function Order() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchOrderData = useCallback(() => {
+  const fetchOrderData = useCallback(async () => {
     if (!productId || !customerId) {
       setError("Missing product or customer information.");
       setLoading(false);
       return;
     }
 
-    // Simulate API call with a short delay
-    setTimeout(() => {
-      setProduct(mockProduct);
+    try {
+      setLoading(true);
+      // Fetch product and customer data concurrently
+      const [productRes, customerRes] = await Promise.all([
+        fetch('/api/products/details', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([parseInt(productId, 10)]), // API expects an array of IDs
+        }),
+        fetch(`/api/customers/${customerId}`),
+      ]);
 
-      // This logic ensures the address structure is consistent, which is good to keep.
+      if (!productRes.ok) throw new Error("Failed to fetch product details.");
+      if (!customerRes.ok) throw new Error("Failed to fetch customer details.");
+
+      const productDataArray = await productRes.json();
+      if (productDataArray.length === 0) {
+        throw new Error(`Product with ID ${productId} not found.`);
+      }
+      const productData = productDataArray[0]; // The API returns an array, we need the first item
+      const customerData = await customerRes.json();
+      setProduct(productData);
+
       const addressTypes = ["Home", "Office", "Other"];
       const addresses = addressTypes.map((type) => {
-        const existing = mockCustomer.addresses?.find((a) => a.type === type);
+        const existing = customerData.addresses?.find((a) => a.type === type);
         return (
           existing || {
             type,
             street: "",
             city: "",
             state: "",
-            postal_code: "",
+            postal_code: "", // Use snake_case to match form field name
             country: "India",
             landmark: "",
           }
         );
       });
-      setCustomer({ ...mockCustomer, addresses }); // Use mockCustomer
+      setCustomer({ ...customerData, addresses });
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
       setLoading(false);
-    }, 500); // 500ms delay to simulate network
+    }
   }, [productId, customerId]);
 
   useEffect(() => {
@@ -166,8 +152,8 @@ export default function Order() {
             <Card className="shadow-sm border-0 mb-4">
               <Card.Body className="p-4">
                 <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Product Details</h4>
-                <div className="d-flex align-items-center">
-                  <Image src={product.image_url} rounded width={80} height={80} style={{ objectFit: 'cover' }} />
+                <div className="d-flex align-items-center"> 
+                  <Image src={product.image_url || product.image} rounded width={80} height={80} style={{ objectFit: 'cover' }} />
                   <div className="ms-3 flex-grow-1">
                     <div className="fw-bold">{product.name}</div>
                     <div className="text-muted small">{product.category_name}</div>
@@ -185,10 +171,12 @@ export default function Order() {
             <Card className="shadow-sm border-0">
               <Card.Body className="p-4">
                 <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Customer Details</h4>
-                <Row>
-                  <Col md={4}><Form.Label>Username:</Form.Label> <p className="fw-light">{customer.username}</p></Col>
-                  <Col md={4}><Form.Label>Email:</Form.Label> <p className="fw-light">{customer.email}</p></Col>
+                <Row className="mb-2">
+                  <Col md={8}><Form.Label>Username:</Form.Label> <p className="fw-light">{customer.username}</p></Col>
                   <Col md={4}><Form.Label>Phone:</Form.Label> <p className="fw-light">{customer.phone}</p></Col>
+                </Row>
+                <Row>
+                  <Col><Form.Label>Email:</Form.Label> <p className="fw-light">{customer.email}</p></Col>
                 </Row>
                 <hr />
                 <h5 className="mb-3 fs-6">Shipping Address</h5>

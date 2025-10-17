@@ -1,11 +1,11 @@
 package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.NewProduct;
+import com.Freshmart.store.dto.ProductResponseDTO;
 import com.Freshmart.store.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
@@ -18,4 +18,10 @@ public class ProductsController {
    public List<NewProduct> GetAllProducts(){
        return productsService.getProductsList();
    }
+
+    @PostMapping("/details")
+    public ResponseEntity<List<ProductResponseDTO>> getProductDetails(@RequestBody List<Integer> productIds) {
+        List<ProductResponseDTO> products = productsService.getProductsByIds(productIds);
+        return ResponseEntity.ok(products);
+    }
 }
