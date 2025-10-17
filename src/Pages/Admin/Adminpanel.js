@@ -11,7 +11,7 @@ export default function Adminpanel() {
     <div>
           <AdminNavbar />
         <Routes>
-      <Route path="/" element={<AdminHome />} />
+      <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/AdminRegister" element={<AdminRegister />} />
           <Route path="/Account" element={<Account />} />
           <Route path="/AdminOrders" element={<AdminOrders />} />

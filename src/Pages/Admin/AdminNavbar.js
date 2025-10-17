@@ -34,7 +34,7 @@ export default function AdminNavbar() {
                   <div className="ms-2">
                     <div className="nav-link fs-5 mt-3 active">
                       <Link
-                        to="/adminHome"
+                        to="/AdminHome"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
                         Home

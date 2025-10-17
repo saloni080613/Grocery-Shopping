@@ -6,10 +6,12 @@ import com.Freshmart.store.model.Admins;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AdminRepository;
 import com.Freshmart.store.repository.CustomerRepository;
-import com.Freshmart.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +22,14 @@ import java.util.Optional;
 public class AuthController {
 
     @Autowired
-    private CustomerService customerService;
-
-    @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
     private AdminRepository adminRepository;
 
-    // The /register method remains unchanged
+    // --- EXISTING CUSTOMER REGISTRATION ---
     @PostMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequest registerRequest) {
-        // ... (registration code is the same)
         if (customerRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
@@ -50,8 +48,36 @@ public class AuthController {
         return ResponseEntity.ok(savedCustomer);
     }
 
+    // --- NEW ADMIN REGISTRATION METHOD ---
+    @PostMapping("/register/admin")
+    public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest registerRequest) {
+        // 1. Check if the email is already in use by another admin
+        if (adminRepository.existsByEmail(registerRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+        }
+
+        // 2. Check if the phone number is already in use by another admin
+        if (adminRepository.existsByPhone(registerRequest.getMobileNo())) {
+            return ResponseEntity.badRequest().body("Error: Phone number is already in use!");
+        }
+
+        // 3. If checks pass, create the new admin
+        Admins newAdmin = new Admins();
+        newAdmin.setName(registerRequest.getUsername());
+        newAdmin.setEmail(registerRequest.getEmail());
+        newAdmin.setPhone(registerRequest.getMobileNo());
+        newAdmin.setPassword(registerRequest.getPassword()); // Storing plain text as before
+        newAdmin.setStatus("logged_out");
+
+        Admins savedAdmin = adminRepository.save(newAdmin);
+
+        return ResponseEntity.ok(savedAdmin);
+    }
+
+    // --- EXISTING LOGIN METHOD ---
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        // ... (existing login logic is unchanged)
         String role = loginRequest.getRole();
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
@@ -61,13 +87,8 @@ public class AuthController {
             if (customerOptional.isPresent()) {
                 Customers customer = customerOptional.get();
                 if (password.equals(customer.getPassword())) {
-
-                    // --- NEW ---
-                    // 1. Set the status to "logged_in"
                     customer.setStatus("logged_in");
-                    // 2. Save the updated customer back to the database
                     customerRepository.save(customer);
-                    // --- END NEW ---
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("message", "Customer login successful!");
@@ -83,13 +104,8 @@ public class AuthController {
             if (adminOptional.isPresent()) {
                 Admins admin = adminOptional.get();
                 if (password.equals(admin.getPassword())) {
-
-                    // --- NEW ---
-                    // 1. Set the status to "logged_in"
                     admin.setStatus("logged_in");
-                    // 2. Save the updated admin back to the database
                     adminRepository.save(admin);
-                    // --- END NEW ---
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("message", "Admin login successful!");
@@ -103,11 +119,5 @@ public class AuthController {
         }
 
         return ResponseEntity.status(401).body("Invalid credentials");
-    }
-
-    @PutMapping("/logout/{customerId}")
-    public ResponseEntity<Customers> logoutCustomer(@PathVariable Integer customerId) {
-        Customers updatedCustomer = customerService.logoutCustomer(customerId);
-        return ResponseEntity.ok(updatedCustomer);
     }
 }
