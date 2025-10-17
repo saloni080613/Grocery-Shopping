@@ -1,7 +1,6 @@
-
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function SignUp() {
   const [userName, setuserName] = useState("");
@@ -45,16 +44,16 @@ export default function SignUp() {
 if (response.ok) {
         const savedCustomer = await response.json();
         console.log('Registration successful:', savedCustomer);
-        alert('Registration successful! You can now log in.');
+        toast.success('Registration successful! You can now log in.');
         navigate('/Login');
       } else {
         const errorMessage = await response.text();
         console.error('Registration failed:', errorMessage);
-        alert(`Registration Failed: ${errorMessage}`);
+        toast.error(`Registration Failed: ${errorMessage}`);
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      alert('An error occurred during registration. Please try again.');
+      toast.error('An error occurred during registration. Please try again.');
     }
   };
 

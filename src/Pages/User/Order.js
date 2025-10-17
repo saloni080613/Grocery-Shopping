@@ -29,6 +29,7 @@ export default function Order() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const fetchOrderData = useCallback(async () => {
     if (!productId || !customerId) {
@@ -112,9 +113,59 @@ export default function Order() {
     }));
   };
 
-  const handlePlaceOrder = () => {
-    // Future implementation: API call to place the order
-    toast.success("Order placed successfully! (Simulation)");
+  const validateShippingAddress = () => {
+    // No validation needed if no address is being used
+    if (selectedAddressType === "None") {
+      return true;
+    }
+    const { street, city, state, postal_code } = activeAddress;
+    if (!street || !city || !state || !postal_code) {
+      toast.error("Please fill all required address fields.");
+      return false;
+    }
+    return true;
+  };
+
+  const handlePlaceOrder = async () => {
+    if (isPlacingOrder) return;
+    if (!validateShippingAddress()) {
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    const payload = {
+      customerId: parseInt(customerId, 10),
+      total_amount: totalAmount,
+      total_quantity: quantity,
+      street: activeAddress.street || "",
+      city: activeAddress.city || "",
+      state: activeAddress.state || "",
+      postal_code: activeAddress.postal_code || "",
+      country: activeAddress.country || "India",
+      landmark: activeAddress.landmark || "",
+    };
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to place order.');
+      }
+
+      toast.success(`Order placed successfully!`);
+      
+
+    } catch (err) {
+      toast.error(err.message || "Could not place order. Please try again.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   if (loading) {
@@ -220,8 +271,15 @@ export default function Order() {
                 </Form.Select>
 
                 <div className="d-grid">
-                  <Button onClick={handlePlaceOrder} style={{ background: "#043b0d", border: "none", padding: "12px" }}>
-                    Place Order
+                  <Button onClick={handlePlaceOrder} disabled={isPlacingOrder} style={{ background: "#043b0d", border: "none", padding: "12px" }}>
+                    {isPlacingOrder ? (
+                      <>
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                        <span className="ms-2">Placing Order...</span>
+                      </>
+                    ) : (
+                      'Place Order'
+                    )}
                   </Button>
                 </div>
               </Card.Body>

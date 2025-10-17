@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [userName, setuserName] = useState("");
@@ -40,14 +40,14 @@ export default function Login() {
       } else {
         const errorText = await response.text();
         if (errorText === 'invalid credential') {
-          alert('Invalid credentials. Please try again.');
+          toast.error('Invalid credentials. Please try again.');
         } else {
-          alert(`Login failed: ${errorText}`);
+          toast.error(`Login failed: ${errorText}`);
         }
       }
     } catch (error) {
       console.error('An error occurred during login:', error);
-      alert('An error occurred. Please try again later.');
+      toast.error('An error occurred. Please try again later.');
     }
   };
   return (

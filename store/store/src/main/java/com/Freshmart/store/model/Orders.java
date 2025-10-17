@@ -32,6 +32,24 @@ public class Orders {
     @Column(name = "total_quantity")
     private Integer totalQuantity;
 
+    @Column(name = "street", nullable = false, length = 255)
+    private String street;
+
+    @Column(name = "city", nullable = false, length = 100)
+    private String city;
+
+    @Column(name = "state", nullable = false, length = 50)
+    private String state;
+
+    @Column(name = "postal_code", nullable = false, length = 20)
+    private String postalCode;
+
+    @Column(name = "country", length = 50)
+    private String country;
+
+    @Column(name = "landmark", length = 50)
+    private String landmark;
+
     @Column(name = "status")
     private String status;
 
@@ -75,6 +93,54 @@ public class Orders {
 
     public void setTotalQuantity(Integer totalQuantity) {
         this.totalQuantity = totalQuantity;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getLandmark() {
+        return landmark;
+    }
+
+    public void setLandmark(String landmark) {
+        this.landmark = landmark;
     }
 
     public String getStatus() {

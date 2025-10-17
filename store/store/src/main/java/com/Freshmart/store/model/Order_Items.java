@@ -18,9 +18,6 @@ public class Order_Items {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customers customer;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -42,13 +39,6 @@ public class Order_Items {
         this.id = id;
     }
 
-    public Customers getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customers customer) {
-        this.customer = customer;
-    }
 
     public Products getProduct() {
         return product;

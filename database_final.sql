@@ -68,7 +68,6 @@ CREATE TABLE Orders (
 
 CREATE TABLE Order_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
     product_id INT NOT NULL,
     product_quantity INT NOT NULL,
     product_price DECIMAL(10,2) NOT NULL,
@@ -122,7 +121,7 @@ CREATE TABLE Admins (
 INSERT INTO Categories (category_name)
 VALUES ('Vegetables'), ('Dairy'), ('Sprouts');
 
-
+insert into Admins values (1,'Meet','password',7021431706,"meetj366@gmail.com",'logged_out');
 
 INSERT INTO Products (name, price, image_url, stock_quantity, category_id)
 VALUES
@@ -130,9 +129,9 @@ VALUES
 ('Onion', 25.00, 'https://thumbs.dreamstime.com/b/pile-red-onions-background-heads-im-market-132370194.jpg', 120, 1),
 ('Spinach', 20.00, 'https://tse4.mm.bing.net/th/id/OIP.smwnzgY1bOPNdwFTx8DlGwHaJB?rs=1&pid=ImgDetMain&o=7&rm=3', 80, 1),
 ('Cow Milk (1L)', 45.00, 'https://images.unsplash.com/photo-1563636619-e9143da7973b?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 50, 2),
-('Paneer (500g)', 200.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcmNKVOO1qOY1ptp6PqpnnBiMjrjBllaMmAA&s', 30, 2),
+('Paneer (500g)', 200.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcmNKVOO1qOY1ptp6PqpnnBiMjrjBllaMmAA&s', 3, 2),
 ('Buttermilk (500ml)', 30.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcxPua7fw57H8uKzt2OIrNgxXHV4yoem7kxw&s', 40, 2),
-('Green Gram (Moong)', 60.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtrlC-EfvUF6vI4Rnwd7G_9yJLeJfadWxfIw&s', 60, 3),
+('Green Gram (Moong)', 60.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtrlC-EfvUF6vI4Rnwd7G_9yJLeJfadWxfIw&s', 0, 3),
 ('Moth Bean (Matki)', 70.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOA9nxDhK-6dSNbfStslxCf0TuJ5YqdCh7ag&s', 50, 3),
 ('Chickpea (Chana)', 80.00, 'https://www.shayonauk.com/cdn/shop/files/FudcoChickpeasWM_5782d60e-f8a9-4a7a-a6a5-1a9540e12fb8.jpg?v=1720469999', 45, 3);
 
