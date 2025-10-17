@@ -6,7 +6,6 @@ import com.Freshmart.store.model.Admins;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AdminRepository;
 import com.Freshmart.store.repository.CustomerRepository;
-import com.Freshmart.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
