@@ -8,60 +8,48 @@ import {
   Row,
   Col,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import toast from "react-hot-toast";
-
-// Mock data for now, to be replaced with API calls
-const mockUser = {
-  username: "Salonee",
-  email: "salonee@example.com",
-  phone: "123-456-7890",
-  addresses: [
-    {
-      type: "Home",
-      street: "123 Green Valley",
-      city: "Pune",
-      state: "Maharashtra",
-      postal_code: "411001",
-      country: "India",
-      landmark: "Near FreshMart",
-    },
-    {
-      type: "Office",
-      street: "456 Business Park",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postal_code: "400051",
-      country: "India",
-      landmark: "Opposite Central Mall",
-    },
-    {
-      type: "Other",
-      street: "",
-      city: "",
-      state: "",
-      postal_code: "",
-      country: "India",
-      landmark: "",
-    },
-  ],
-};
 
 export default function Account() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const customerId = queryParams.get("customerId");
 
-  const [user, setUser] = useState(mockUser);
+  const [user, setUser] = useState(null);
   const [selectedAddressType, setSelectedAddressType] = useState("Home");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // In the future, you can fetch user data here
   useEffect(() => {
-    if (customerId) {
-      // Example: fetch(`/api/user/${customerId}`).then(...)
-      setUser(mockUser);
+    if (!customerId) {
+      setError("Customer ID is missing. Please log in.");
+      setLoading(false);
+      return;
     }
+
+    const fetchAccountDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/account/${customerId}`);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch account details: ${response.statusText}`
+          );
+        }
+        const data = await response.json();
+        setUser(data);
+      } catch (err) {
+        setError(err.message);
+        toast.error("Could not load account details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountDetails();
   }, [customerId]);
 
   const handleAddressTypeChange = (e) => {
@@ -118,6 +106,25 @@ export default function Account() {
 
   const activeAddress =
     user.addresses.find((addr) => addr.type === selectedAddressType) || {};
+
+  if (loading) {
+    return (
+      <div className="text-center p-5">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-2">Loading Account Details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-5">
+        <Alert variant="danger">{error}</Alert>
+      </div>
+    );
+  }
+
+  if (!user) return null; // Should not happen if loading/error is handled
 
   return (
     <section style={{ padding: "24px", background: "#f8f9fa" }}>
