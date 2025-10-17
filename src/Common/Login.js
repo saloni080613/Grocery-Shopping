@@ -35,7 +35,7 @@ export default function Login() {
         if (userIs === 'Customer') {
           navigate(`/?customerId=${userId}`);
         } else if (userIs === 'Admin') {
-          navigate(`/Adminpanel?adminId=${userId}`);
+          navigate(`/admin?adminId=${userId}`);
         }
       } else {
         const errorText = await response.text();
