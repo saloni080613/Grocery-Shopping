@@ -40,7 +40,19 @@ export default function Account() {
           );
         }
         const data = await response.json();
-        setUser(data);
+        
+        // Ensure all address types exist, even if empty
+        const addressTypes = ["Home", "Office", "Other"];
+        const addresses = addressTypes.map(type => {
+          const existing = data.addresses?.find(a => a.type === type);
+          return existing || { type, street: '', city: '', state: '', postal_code: '', country: 'India', landmark: '' };
+        });
+
+        setUser({
+          ...data,
+          addresses,
+        });
+
       } catch (err) {
         setError(err.message);
         toast.error("Could not load account details.");
@@ -59,11 +71,21 @@ export default function Account() {
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => {
-      const updatedAddresses = prev.addresses.map((addr) =>
-        addr.type === selectedAddressType
-          ? { ...addr, [name]: value }
-          : addr
-      );
+      let addressExists = false;
+      const updatedAddresses = prev.addresses.map((addr) => {
+        if (addr.type === selectedAddressType) {
+          addressExists = true;
+          return { ...addr, [name]: value };
+        }
+        return addr;
+      });
+
+      // If the address type didn't exist, create it.
+      if (!addressExists) {
+        const newAddress = { type: selectedAddressType, country: 'India', [name]: value };
+        updatedAddresses.push(newAddress);
+      }
+
       return { ...prev, addresses: updatedAddresses };
     });
   };
@@ -90,7 +112,7 @@ export default function Account() {
     const newErrors = {};
 
     if (!validateAddress()) {
-      newErrors.address = "Please fill all required address fields .";
+      newErrors.address = "Please fill all required address fields (Street, City, State, Postal Code) or leave them all empty.";
     }
 
     setErrors(newErrors);
@@ -104,8 +126,11 @@ export default function Account() {
     }
   };
 
-  const activeAddress =
-    user.addresses.find((addr) => addr.type === selectedAddressType) || {};
+  // This is now safe because we ensure all address types exist in state.
+  const activeAddress = user
+    ? user.addresses.find((addr) => addr.type === selectedAddressType)
+    : {};
+
 
   if (loading) {
     return (

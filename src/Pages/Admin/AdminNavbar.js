@@ -44,7 +44,7 @@ export default function AdminNavbar() {
                   <div className="ms-3">
                     <div className="nav-link fs-5 mt-3 active">
                       <Link
-                        to="/adminProducts"
+                        to="/AdminProducts"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
                         Products
@@ -54,7 +54,7 @@ export default function AdminNavbar() {
                   <div>
                     <div className="ms-3 fs-5 mt-3 nav-link">
                       <Link
-                        to="/adminOrders"
+                        to="/AdminOrders"
                         style={{ color: "#3a3d40", textDecoration: "none" }}
                       >
                         Orders
@@ -97,7 +97,7 @@ export default function AdminNavbar() {
                                 setIsOpen(false);
                               }}
                             >
-                              <Link className="dropdown-item " to="/adminRegister">
+                              <Link className="dropdown-item " to="/AdminRegister">
                                 Add Admin
                               </Link>
                             </li>
