@@ -1,8 +1,123 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Card, Button, Container, Row, Col, Spinner } from "react-bootstrap";
-import { motion } from "framer-motion";
+import { Button, Container, Row, Col, Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { IoHeart, IoHeartOutline } from "react-icons/io5";
 
+function ProductCard({
+  product,
+  wishlisted,
+  onToggleWishlist,
+  onAddToCart,
+  onOrderNow,
+}) {
+  return (
+    <article
+      style={{
+        border: "1px solid #eee",
+        borderRadius: 8,
+        overflow: "hidden",
+        background: "#fff",
+        position: "relative",
+      }}
+    >
+      <button
+        onClick={onToggleWishlist}
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          border: "none",
+          background: "rgba(255,255,255,0.9)",
+          borderRadius: 999,
+          width: 36,
+          height: 36,
+          display: "grid",
+          placeItems: "center",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+          cursor: "pointer",
+        }}
+      >
+        {wishlisted ? (
+          <IoHeart style={{ color: "#e53935", fontSize: 20 }} />
+        ) : (
+          <IoHeartOutline style={{ color: "#3a3d40", fontSize: 20 }} />
+        )}
+      </button>
+      <div style={{ aspectRatio: "4 / 3", background: "#f7f7f7" }}>
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : null}
+      </div>
+      <div style={{ padding: 12, flexGrow: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ fontWeight: 600 }}>{product.name}</div>
+        <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+          {product.category}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            marginTop: 8,
+          }}
+        >
+          <span style={{ fontWeight: 700 }}>₹{product.price.toFixed(2)}</span>
+
+          {!product.inStock && (
+            <span style={{ fontSize: 12, color: "crimson" }}>Out of stock</span>
+          )}
+        </div>
+        <div
+          style={{
+            marginTop: "auto",
+            paddingTop: 12,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <button
+            onClick={onAddToCart}
+            disabled={!product.inStock}
+            style={{
+              background: "#0da308",
+              color: "#fff",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: 6,
+              cursor: product.inStock ? "pointer" : "not-allowed",
+              opacity: product.inStock ? 1 : 0.7,
+              width: "100%",
+            }}
+          >
+            {product.inStock ? "Add to Cart" : "Out of Stock"}
+          </button>
+          <button
+            onClick={onOrderNow}
+            disabled={!product.inStock}
+            style={{
+              background: "#043b0d",
+              color: "#fff",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: 6,
+              cursor: product.inStock ? "pointer" : "not-allowed",
+              opacity: product.inStock ? 1 : 0.7,
+              width: "100%",
+            }}
+          >
+            Order now
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
 export default function Wishlist() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,9 +128,10 @@ export default function Wishlist() {
   const queryParams = new URLSearchParams(location.search);
   const customerId = queryParams.get("customerId");
 
+
   useEffect(() => {
     if (!customerId) {
-      setMessage("Please log in to see wishlist");
+      
       setLoading(false);
       return;
     }
@@ -53,16 +169,63 @@ export default function Wishlist() {
 
       if (response.ok) {
         const message = await response.text();
-        alert(message);
+        toast.success(message);
         setWishlist((prev) => prev.filter((item) => item.id !== productId));
       } else {
         const errorText = await response.text();
-        alert(`Failed to update wishlist: ${errorText}`);
+        toast.error(`Failed to update wishlist: ${errorText}`);
       }
     } catch (error) {
       console.error("Error removing product:", error);
+      toast.error("An error occurred while removing the product.");
     }
   };
+
+  const handleAddToCart = async (product) => {
+    if (!customerId) {
+      toast.error("Please log in to add items to your cart.");
+      navigate("/login");
+      return;
+    }
+
+    const addToCartRequest = {
+      customerId: parseInt(customerId),
+      productId: product.id,
+    };
+
+    try {
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addToCartRequest),
+      });
+
+      if (response.ok) {
+        toast.success(`${product.name} has been added to your cart!`);
+      } else {
+        const errorText = await response.text();
+        toast.error(`Failed to add to cart: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("An error occurred while adding to cart:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+
+  function handleOrderNow(product) {
+    // Navigate to Order page with product id as query param
+    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
+  }
+
+   if (!customerId) {
+    return <div style={{ background: '#fff', padding: '24px', borderRadius: 8, textAlign: 'center' }}>
+          <button onClick={() => navigate(`/login`)} className="btn btn-dark">
+            please login to continue
+          </button>
+        </div>;
+  }
 
   if (loading)
     return (
@@ -93,7 +256,7 @@ export default function Wishlist() {
           <p>Your wishlist is empty.</p>
           <Button
             variant="dark"
-            onClick={() => navigate("/search")}
+            onClick={() => navigate(`/search${location.search}`)}
           >
             Continue Shopping
           </Button>
@@ -103,37 +266,13 @@ export default function Wishlist() {
           <Row className="g-4">
             {wishlist.map((product) => (
               <Col key={product.id} xs={12} sm={6} md={4} lg={3}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="shadow-sm h-100">
-                    <Card.Img
-                      variant="top"
-                      src={product.image}
-                      alt={product.name}
-                      style={{ height: "160px", objectFit: "cover" }}
-                    />
-                    <Card.Body className="d-flex flex-column p-3">
-                      <Card.Title className="fs-6">{product.name}</Card.Title>
-                      <Card.Text className="text-muted mb-1 small">
-                        {product.category}
-                      </Card.Text>
-                      <Card.Text className="fw-semibold text-success mb-2 small">
-                        ₹{product.price.toFixed(2)}
-                      </Card.Text>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleRemove(product.id)}
-                        className="mt-auto"
-                      >
-                        Remove
-                      </Button>
-                    </Card.Body>
-                  </Card>
-                </motion.div>
+                <ProductCard
+                  product={product}
+                  wishlisted={true} // All items on wishlist page are wishlisted
+                  onToggleWishlist={() => handleRemove(product.id)} // Heart icon now removes
+                  onAddToCart={() => handleAddToCart(product)}
+                  onOrderNow={() => handleOrderNow(product)}
+                />
               </Col>
             ))}
           </Row>
