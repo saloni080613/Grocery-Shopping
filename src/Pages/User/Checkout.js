@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -11,109 +11,73 @@ import {
   Alert,
   Image,
 } from "react-bootstrap";
-import { IoAdd, IoRemove } from "react-icons/io5";
 import toast from "react-hot-toast";
 
-const mockProduct = {
-  id: 1,
-  name: "Fresh Tomato",
-  category_name: "Vegetables",
-  price: 30.00,
-  image_url: "https://images-prod.healthline.com/hlcmsresource/images/AN_images/tomatoes-1296x728-feature.jpg",
-  stock_quantity: 50,
-};
-
-const mockCustomer = {
-  id: 1,
-  username: "Salonee",
-  email: "salonee@example.com",
-  phone: "123-456-7890",
-  addresses: [
-    {
-      type: "Home",
-      street: "123 Green Valley",
-      city: "Pune",
-      state: "Maharashtra",
-      postal_code: "411001",
-      country: "India",
-      landmark: "Near FreshMart",
-    },
-    {
-      type: "Office",
-      street: "456 Business Park",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postal_code: "400051",
-      country: "India",
-      landmark: "Opposite Central Mall",
-    },
-  ],
-};
-
-export default function Order() {
+export default function Checkout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const productId = queryParams.get("productId");
   const customerId = queryParams.get("customerId");
-  const initialQuantity = parseInt(queryParams.get("quantity") || "1", 10);
 
-  const [product, setProduct] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const [customer, setCustomer] = useState(null);
-  const [quantity, setQuantity] = useState(initialQuantity);
   const [selectedAddressType, setSelectedAddressType] = useState("Home");
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchOrderData = useCallback(() => {
-    if (!productId || !customerId) {
-      setError("Missing product or customer information.");
+  const fetchCheckoutData = useCallback(async () => {
+    if (!customerId) {
+      setError("Customer ID is missing. Please log in again.");
       setLoading(false);
       return;
     }
 
-    // Simulate API call with a short delay
-    setTimeout(() => {
-      setProduct(mockProduct);
+    try {
+      setLoading(true);
+      const [cartRes, customerRes] = await Promise.all([
+        fetch(`/api/cart/${customerId}`),
+        fetch(`/api/customers/${customerId}`),
+      ]);
 
-      // This logic ensures the address structure is consistent, which is good to keep.
+      if (!cartRes.ok) throw new Error("Failed to fetch cart items.");
+      if (!customerRes.ok) throw new Error("Failed to fetch customer details.");
+
+      const cartData = await cartRes.json();
+      if (cartData.length === 0) {
+        toast.error("Your cart is empty. Add items to checkout.");
+        navigate(`/Search?customerId=${customerId}`);
+        return;
+      }
+      const customerData = await customerRes.json();
+
+      setCartItems(cartData);
+
       const addressTypes = ["Home", "Office", "Other"];
       const addresses = addressTypes.map((type) => {
-        const existing = mockCustomer.addresses?.find((a) => a.type === type);
+        const existing = customerData.addresses?.find((a) => a.type === type);
         return (
           existing || {
-            type,
-            street: "",
-            city: "",
-            state: "",
-            postal_code: "",
-            country: "India",
-            landmark: "",
+            type, street: "", city: "", state: "", postal_code: "", country: "India", landmark: "",
           }
         );
       });
-      setCustomer({ ...mockCustomer, addresses }); // Use mockCustomer
+      setCustomer({ ...customerData, addresses });
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
       setLoading(false);
-    }, 500); // 500ms delay to simulate network
-  }, [productId, customerId]);
+    }
+  }, [customerId, navigate]);
 
   useEffect(() => {
-    fetchOrderData();
-  }, [fetchOrderData]);
-
-  const handleQuantityChange = (amount) => {
-    const newQuantity = quantity + amount;
-    if (newQuantity > 0 && newQuantity <= product.stock_quantity) {
-      setQuantity(newQuantity);
-    } else if (newQuantity > product.stock_quantity) {
-      toast.error(`Only ${product.stock_quantity} items in stock!`);
-    }
-  };
+    fetchCheckoutData();
+  }, [fetchCheckoutData]);
 
   const handleAddressTypeChange = (e) => {
-    const type = e.target.value;
-    setSelectedAddressType(type);
+    setSelectedAddressType(e.target.value);
   };
 
   const handleAddressChange = (e) => {
@@ -127,7 +91,7 @@ export default function Order() {
   };
 
   const handlePlaceOrder = () => {
-    // Future implementation: API call to place the order
+    // Future implementation: API call to place the order with all cart items
     toast.success("Order placed successfully! (Simulation)");
   };
 
@@ -135,7 +99,7 @@ export default function Order() {
     return (
       <div className="text-center p-5">
         <Spinner animation="border" variant="primary" />
-        <p className="mt-2">Loading Order Details...</p>
+        <p className="mt-2">Loading Checkout...</p>
       </div>
     );
   }
@@ -144,41 +108,39 @@ export default function Order() {
     return <Alert variant="danger" className="m-4">{error}</Alert>;
   }
 
-  if (!product || !customer) return null;
+  if (!cartItems.length || !customer) return null;
 
-  // If 'None' is selected, use an empty object to clear the form for new input.
-  // Otherwise, find the corresponding address from the customer's data.
   const activeAddress =
     selectedAddressType === "None"
       ? {}
       : customer.addresses.find((addr) => addr.type === selectedAddressType) || {};
-  const totalAmount = product.price * quantity;
+  
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <section style={{ padding: "24px", background: "#f8f9fa" }}>
       <Container>
         <h2 className="fw-bold mb-4" style={{ color: "#2d362f" }}>
-          Order Checkout
+          Checkout
         </h2>
         <Row className="g-4">
-          {/* Left Column: Product and Customer Details */}
+          {/* Left Column: Items and Customer Details */}
           <Col lg={8}>
             <Card className="shadow-sm border-0 mb-4">
               <Card.Body className="p-4">
-                <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Product Details</h4>
-                <div className="d-flex align-items-center">
-                  <Image src={product.image_url} rounded width={80} height={80} style={{ objectFit: 'cover' }} />
-                  <div className="ms-3 flex-grow-1">
-                    <div className="fw-bold">{product.name}</div>
-                    <div className="text-muted small">{product.category_name}</div>
-                    <div className="fw-bold" style={{ color: "#0da308" }}>₹{product.price.toFixed(2)}</div>
+                <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Order Items</h4>
+                {cartItems.map(item => (
+                  <div key={item.id} className="d-flex align-items-center mb-3 border-bottom pb-3">
+                    <Image src={item.image} rounded width={60} height={60} style={{ objectFit: 'cover' }} />
+                    <div className="ms-3 flex-grow-1">
+                      <div className="fw-bold">{item.name}</div>
+                      <div className="text-muted small">
+                        {item.quantity} x ₹{item.price.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="fw-bold">₹{(item.price * item.quantity).toFixed(2)}</div>
                   </div>
-                  <div className="d-flex align-items-center border rounded p-1">
-                    <Button variant="light" size="sm" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}><IoRemove /></Button>
-                    <span className="mx-2 fw-bold">{quantity}</span>
-                    <Button variant="light" size="sm" onClick={() => handleQuantityChange(1)} disabled={quantity >= product.stock_quantity}><IoAdd /></Button>
-                  </div>
-                </div>
+                ))}
               </Card.Body>
             </Card>
 
@@ -197,7 +159,6 @@ export default function Order() {
                     <Form.Check inline key={type} type="radio" label={type} name="addressType" value={type} checked={selectedAddressType === type} onChange={handleAddressTypeChange} />
                   ))}
                 </Form.Group>
-                {/* Address form is now always visible */}
                 <>
                   <Form.Group className="mb-3"><Form.Control name="street" value={activeAddress.street || ''} onChange={handleAddressChange} placeholder="Street" /></Form.Group>
                   <Row>
@@ -244,3 +205,4 @@ export default function Order() {
     </section>
   );
 }
+

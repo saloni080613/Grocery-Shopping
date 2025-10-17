@@ -8,8 +8,9 @@ import Wishlist from './Pages/User/Wishlist';
 import AboutUs from './Pages/User/AboutUs';
 import Services from './Pages/User/Services';
 import Search from './Pages/User/Search';
+import Checkout from './Pages/User/Checkout';
 import OrderTrack from './Pages/User/OrderTrack';
-import Order from './Pages/User/Order'
+import Order from './Pages/User/Order';
 import SignUp from "./Common/SignUp";
 import Login from "./Common/Login";
 import Footer from './Pages/User/Footer';
@@ -41,6 +42,7 @@ function App() {
        <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Cart" element={<Cart />} />
+             <Route path="/checkout" element={<Checkout />} />
             <Route path="/OrderTrack" element={<OrderTrack />} />
             <Route path="/AboutUs" element={<AboutUs />} />
             <Route path="/Services" element={<Services />} />

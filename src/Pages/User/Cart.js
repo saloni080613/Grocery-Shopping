@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoTrash, IoAdd, IoRemove } from "react-icons/io5";
-
 import toast from "react-hot-toast";
+
+
 export default function Cart() {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
@@ -189,7 +190,7 @@ export default function Cart() {
               <span>₹{total.toFixed(2)}</span>
             </div>
             <button
-              onClick={() => toast.success('Proceeding to checkout!')}
+              onClick={() => navigate(`/checkout?customerId=${customerId}`)}
               style={{
                 background: '#043b0d',
                 color: '#fff',

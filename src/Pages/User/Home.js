@@ -191,7 +191,7 @@ export default function Home() {
 
     if (!customerId) {
       toast.error("Please log in to modify your wishlist.");
-      navigate("/Login");
+     
       return;
     }
 
@@ -230,7 +230,7 @@ export default function Home() {
 
     if (!customerId) {
       toast.error("Please log in to add items to your cart.");
-      navigate("/Login");
+      
       return;
     }
 
@@ -263,8 +263,14 @@ export default function Home() {
   function handleOrderNow(product) {
     const queryParams = new URLSearchParams(location.search);
     const customerId = queryParams.get("customerId");
-    // Navigate to Order page with product id as query param
-    navigate(`/Order?productId=${product.id}${customerId ? `&customerId=${customerId}` : ''}`);
+
+    if (!customerId) {
+      toast.error("Please log in to place an order.");
+      return;
+    }
+
+    // Navigate to Order page with product and customer IDs
+    navigate(`/Order?productId=${product.id}&customerId=${customerId}`);
   }
 
   return (
