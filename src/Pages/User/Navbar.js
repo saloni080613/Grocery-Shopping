@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { PiShoppingCartBold } from "react-icons/pi";
 import { IoHeart, IoSearch, IoMenu, IoClose } from "react-icons/io5";
+import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
@@ -37,11 +38,11 @@ export default function Navbar() {
         } else {
           const errorText = await response.text();
           console.error(`Logout failed: ${errorText}`);
-          alert(`Logout failed: ${errorText}`);
+          toast.error(`Logout failed: ${errorText}`);
         }
       } catch (error) {
         console.error('An error occurred during logout:', error);
-        alert('An error occurred during logout. Please try again.');
+        toast.error('An error occurred during logout. Please try again.');
       }
     }
   };

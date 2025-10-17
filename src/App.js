@@ -1,5 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Navbar from './Pages/User/Navbar';
 import Home from './Pages/User/Home';
 import Cart from './Pages/User/Cart';
@@ -25,21 +26,16 @@ function App() {
   return (
  
     
-    // <div>
 
-    //    <AdminNavbar />
-    //    <Routes>
-    //  <Route path="/" element={<AdminHome />} />
-    //      <Route path="/AdminRegister" element={<AdminRegister />} />
-    //      <Route path="/Account" element={<Account />} />
-    //      <Route path="/AdminOrders" element={<AdminOrders />} />
-    //      <Route path="/AdminProducts" element={<AdminProducts />} />
-    //    </Routes>
-
-    //   <Footer/>
-    // </div>
   
   <div>
+    <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000, // Toasts will disappear after 3 seconds
+        }}
+      />
        <Navbar />
         
        <Routes>

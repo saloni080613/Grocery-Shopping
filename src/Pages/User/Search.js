@@ -2,6 +2,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, } from 'react-router-dom';
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
+import toast from 'react-hot-toast';
 
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToCart, onOrderNow }) {
@@ -233,7 +234,7 @@ export default function Search() {
     const customerId = queryParams.get("customerId");
 
     if (!customerId) {
-      alert("Please log in to modify your wishlist.");
+      toast.error("Please log in to modify your wishlist.");
       navigate("/Login");
       return;
     }
@@ -254,16 +255,16 @@ export default function Search() {
 
       if (response.ok){
         const message = await response.text();
-        alert(message);
+        toast.success(message);
         await fetchWishlist(); // Refetch wishlist from server
       }
       else {
         const errorText = await response.text();
-        alert(`Failed to update wishlist: ${errorText}`);
+        toast.error(`Failed to update wishlist: ${errorText}`);
       }
     } catch (error) {
       console.error('An error occurred while toggling wishlist:', error);
-      alert('An error occurred. Please try again later.');
+      toast.error('An error occurred. Please try again later.');
     }
   }
 
@@ -272,7 +273,7 @@ export default function Search() {
     const customerId = queryParams.get("customerId");
 
     if (!customerId) {
-      alert("Please log in to add items to your cart.");
+      toast.error("Please log in to add items to your cart.");
       navigate("/Login");
       return;
     }
@@ -292,14 +293,14 @@ export default function Search() {
       });
 
       if (response.ok) {
-        alert(`${product.name} has been added to your cart!`);
+        toast.success(`${product.name} has been added to your cart!`);
       } else {
         const errorText = await response.text();
-        alert(`Failed to add to cart: ${errorText}`);
+        toast.error(`Failed to add to cart: ${errorText}`);
       }
     } catch (error) {
       console.error("An error occurred while adding to cart:", error);
-      alert("An error occurred. Please try again later.");
+      toast.error("An error occurred. Please try again later.");
     }
   };
 

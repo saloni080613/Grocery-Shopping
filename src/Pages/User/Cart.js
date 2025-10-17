@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoTrash, IoAdd, IoRemove } from "react-icons/io5";
 
+import toast from "react-hot-toast";
 export default function Cart() {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
@@ -52,7 +53,7 @@ export default function Cart() {
   const handleUpdateQuantity = async (productId, newQuantity) => {
     const item = cartItems.find(i => i.id === productId);
     if (newQuantity > item.stockQuantity) {
-      alert(`Cannot add more than available stock (${item.stockQuantity}).`);
+      toast.error(`Cannot add more than available stock (${item.stockQuantity}).`);
       return;
     }
 
@@ -72,11 +73,11 @@ export default function Cart() {
       if (!response.ok) {
         // Revert on error
         fetchCartItems();
-        alert('Failed to update cart.');
+        toast.error('Failed to update cart.');
       }
     } catch (error) {
       fetchCartItems(); // Revert
-      alert('An error occurred while updating cart.');
+      toast.error('An error occurred while updating cart.');
     }
   };
 
@@ -90,11 +91,11 @@ export default function Cart() {
       });
       if (!response.ok) {
         fetchCartItems(); // Revert
-        alert('Failed to remove item from cart.');
+        toast.error('Failed to remove item from cart.');
       }
     } catch (error) {
       fetchCartItems(); // Revert
-      alert('An error occurred while removing item.');
+      toast.error('An error occurred while removing item.');
     }
   };
 
@@ -188,7 +189,7 @@ export default function Cart() {
               <span>₹{total.toFixed(2)}</span>
             </div>
             <button
-              onClick={() => alert('Proceeding to checkout!')}
+              onClick={() => toast.success('Proceeding to checkout!')}
               style={{
                 background: '#043b0d',
                 color: '#fff',

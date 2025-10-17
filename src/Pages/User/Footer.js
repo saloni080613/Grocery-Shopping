@@ -4,14 +4,14 @@ import { Container, Row, Col } from "react-bootstrap";
 
 export default function Footer() {
   return (
-    <footer className=" text-white py-5 mt-5" style={{ backgroundColor: "#252925ff" }}>
+    <footer className=" text-white py-5 mt-5" style={{ backgroundColor: "#252925ff" }} >
       <Container>
         <Row>
          
           <Col md={3} sm={6} className="mb-4">
             <h2 className="fw-bold">FreshMart</h2>
             <p className="small mt-2">
-              Freshness at your doorstep — shop smart, eat healthy.
+              Freshness at your doorstep — shop smart, shop online.
             </p>
           </Col>
 
