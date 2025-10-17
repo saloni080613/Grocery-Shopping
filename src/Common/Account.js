@@ -22,6 +22,7 @@ export default function Account() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!customerId) {
@@ -107,20 +108,56 @@ export default function Account() {
     return true;
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
+
     const newErrors = {};
 
     if (!validateAddress()) {
       newErrors.address = "Please fill all required address fields (Street, City, State, Postal Code) or leave them all empty.";
     }
-
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // In the future, this will be an API call
-      console.log("Saving user data:", user);
-      toast.success("Account details saved successfully!");
+      setIsSaving(true);
+      const activeAddress = user.addresses.find(
+        (addr) => addr.type === selectedAddressType
+      );
+
+      // Only save if there's something to save.
+      if (activeAddress && activeAddress.street) {
+        const payload = {
+          customerId: parseInt(customerId, 10),
+          type: activeAddress.type,
+          street: activeAddress.street,
+          city: activeAddress.city,
+          state: activeAddress.state,
+          postalCode: activeAddress.postal_code,
+          country: activeAddress.country,
+          landmark: activeAddress.landmark,
+        };
+
+        try {
+          const response = await fetch('/api/addresses', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save address.');
+          }
+          toast.success("Address saved successfully!");
+        } catch (err) {
+          toast.error(err.message || "Could not save address.");
+        } finally {
+          setIsSaving(false);
+        }
+      } else {
+        // If the form is empty, we can just inform the user.
+        toast.success("No changes to save.");
+      }
     } else {
       toast.error("Please correct the errors before saving.");
     }
@@ -241,8 +278,15 @@ export default function Account() {
                   </Form.Group>
 
                   <div className="d-grid">
-                    <Button type="submit" style={{ background: "#043b0d", border: "none" }}>
-                      Save Changes
+                    <Button type="submit" disabled={isSaving} style={{ background: "#043b0d", border: "none" }}>
+                      {isSaving ? (
+                        <>
+                          <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                          <span className="ms-2">Saving...</span>
+                        </>
+                      ) : (
+                        'Save Changes'
+                      )}
                     </Button>
                   </div>
                 </Form>

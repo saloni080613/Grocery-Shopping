@@ -1,6 +1,7 @@
 package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.CustomerResponseDTO;
+import com.Freshmart.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
