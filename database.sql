@@ -62,6 +62,12 @@ CREATE TABLE Orders (
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(10,2),
     total_quantity INT,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(50) DEFAULT 'India',
+    landmark VARCHAR(50),
     status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed') NOT NULL DEFAULT 'Pending',
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
 );
