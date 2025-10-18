@@ -1,11 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function AdminNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const adminId = searchParams.get('adminId');
+
+  useEffect(() => {
+    // Check if adminId exists in the URL to determine login state
+    if (adminId) {
+      setIsAdminLoggedIn(true);
+    } else {
+      setIsAdminLoggedIn(false);
+    }
+  }, [location.search, adminId]);
+
+  const handleLogout = async () => {
+    if (adminId) {
+      try {
+        const response = await fetch(`/api/admins/logout/${adminId}`, { method: 'PUT' });
+        if (response.ok) {
+          toast.success("Logged out successfully!");
+          navigate('/');
+        } else {
+          const errorText = await response.text();
+          toast.error(`Logout failed: ${errorText}`);
+        }
+      } catch (error) {
+        toast.error("An error occurred during logout.");
+      }
+    }
+  };
 
   return (
     <div>
@@ -23,7 +53,7 @@ export default function AdminNavbar() {
           <div className="d-flex justify-content-between">
             <div className="ms-2">
               <div className="nav-link fs-5 mt-3 active">
-                {/* FIX 1: Point to the admin index route */}
+                
                 <Link
                   to={`/admin?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
@@ -34,7 +64,7 @@ export default function AdminNavbar() {
             </div>
             <div className="ms-3">
               <div className="nav-link fs-5 mt-3 active">
-                {/* FIX 2: Add "/admin/" prefix */}
+                
                 <Link
                   to={`/admin/products?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
@@ -45,7 +75,7 @@ export default function AdminNavbar() {
             </div>
             <div>
               <div className="ms-3 fs-5 mt-3 nav-link">
-                {/* FIX 3: Add "/admin/" prefix */}
+                
                 <Link
                   to={`/admin/orders?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
@@ -70,30 +100,46 @@ export default function AdminNavbar() {
                 className={`dropdown-menu  ${isOpen ? "show" : ""} `}
                 style={{ right: 0, left: "auto" }}
               >
-                <li>
-                  <div
-                    onClick={() => {
-                      setIsOpen(false);
-                    }}
-                  >
-                    {/* FIX 4: Add "/admin/" prefix */}
-                    <Link className="dropdown-item " to={`/admin/register?adminId=${adminId}`}>
-                      Add Admin
-                    </Link>
-                  </div>
-                </li>
-                {/* NOTE: This link goes to a User page, which is fine! */}
-                <li>
-                  <div
-                    onClick={() => {
-                      setIsOpen(false);
-                    }}
-                  >
-                    <Link className="dropdown-item" to={`/admin/account?adminId=${adminId}`}>
-                      My Account
-                    </Link>
-                  </div>
-                </li>
+                {isAdminLoggedIn ? (
+                  <>
+                    <li>
+                      <div onClick={() => setIsOpen(false)}>
+                        <Link className="dropdown-item" to={`/admin/account?adminId=${adminId}`}>
+                          My Account
+                        </Link>
+                      </div>
+                    </li>
+                    <li>
+                      <div onClick={() => setIsOpen(false)}>
+                        <Link className="dropdown-item" to={`/admin/register?adminId=${adminId}`}>
+                          Add Admin
+                        </Link>
+                      </div>
+                    </li>
+                    <li>
+                      <div
+                        className="dropdown-item"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setIsOpen(false);
+                          handleLogout();
+                        }}
+                      >
+                        Log out
+                      </div>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <div onClick={() => setIsOpen(false)}>
+                        <Link className="dropdown-item" to="/AdminLogin">
+                          Login
+                        </Link>
+                      </div>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>

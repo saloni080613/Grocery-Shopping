@@ -6,8 +6,10 @@ import com.Freshmart.store.model.Admins;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AdminRepository;
 import com.Freshmart.store.repository.CustomerRepository;
+import com.Freshmart.store.service.AdminService;
 import com.Freshmart.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private AdminService adminService;
 
     // --- EXISTING CUSTOMER REGISTRATION ---
     @PostMapping("/register")
@@ -127,4 +132,8 @@ public class AuthController {
         Customers updatedCustomer = customerService.logoutCustomer(customerId);
         return ResponseEntity.ok(updatedCustomer);
     }
+
+
+
+
 }
