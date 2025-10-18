@@ -171,5 +171,15 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    public Orders updateOrderStatus(UpdateOrderStatusRequestDTO requestDTO) {
+        // Step 1: Find the order by its ID.
+        Orders order = orderRepository.findById(requestDTO.getOrderId())
+                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + requestDTO.getOrderId()));
 
+        // Step 2: Update the status.
+        order.setStatus(requestDTO.getStatus());
+
+        // Step 3: Save the updated order back to the database.
+        return orderRepository.save(order);
+    }
 }

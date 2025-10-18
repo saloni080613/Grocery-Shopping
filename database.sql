@@ -68,17 +68,18 @@ CREATE TABLE Orders (
     postal_code VARCHAR(20) NOT NULL,
     country VARCHAR(50) DEFAULT 'India',
     landmark VARCHAR(50),
-    status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Failed') NOT NULL DEFAULT 'Pending',
+    status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Failed') NOT NULL DEFAULT 'Pending',
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
 );
 
 CREATE TABLE Order_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
     product_id INT NOT NULL,
     product_quantity INT NOT NULL,
     product_price DECIMAL(10,2) NOT NULL,
-    UNIQUE KEY uq_order_items_customer_product (customer_id, product_id),
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
+    UNIQUE KEY uq_order_items_customer_product (order_id, product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 ); 
 

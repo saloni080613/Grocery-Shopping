@@ -18,7 +18,6 @@ const statusOptions = [
   "Processing",
   "Shipped",
   "Delivered",
-  "Cancelled",
   "Failed",
 ];
 
@@ -51,14 +50,25 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`/api/orders/${orderId}`, {
-        method: 'PUT',
+      // Extract the numeric part from the string ID (e.g., "ORD-123" -> 123)
+      const numericOrderId = parseInt(orderId.replace('ORD-', ''), 10);
+
+      // Add a check to ensure parsing was successful before sending
+      if (isNaN(numericOrderId)) {
+        toast.error(`Invalid Order ID format received: ${orderId}`);
+        return;
+      }
+
+      const response = await fetch(`/api/orders/status`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
+        // Use the correctly parsed numericOrderId
+        body: JSON.stringify({ orderId: numericOrderId, status: newStatus }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update order status.');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update order status.');
       }
 
       // Update the status in the local state for immediate UI feedback

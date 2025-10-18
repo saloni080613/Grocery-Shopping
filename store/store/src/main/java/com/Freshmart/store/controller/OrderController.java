@@ -3,6 +3,7 @@ package com.Freshmart.store.controller;
 import com.Freshmart.store.dto.AddOrderItemRequestDTO;
 import com.Freshmart.store.dto.CreateOrderRequestDTO;
 import com.Freshmart.store.dto.OrderHistoryDTO;
+import com.Freshmart.store.dto.UpdateOrderStatusRequestDTO;
 import com.Freshmart.store.model.Order_Items;
 import com.Freshmart.store.model.Orders;
 import com.Freshmart.store.service.OrderService;
@@ -44,5 +45,15 @@ public class OrderController {
 
         List<Order_Items> savedItems = orderService.addItemsToOrder(orderId, items);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedItems);
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<?> updateSingleOrderStatus(@RequestBody UpdateOrderStatusRequestDTO requestDTO) {
+        try {
+            Orders updatedOrder = orderService.updateOrderStatus(requestDTO);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }
