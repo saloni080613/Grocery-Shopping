@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 export default function SignUp() {
   const [userName, setuserName] = useState("");
@@ -9,6 +10,8 @@ export default function SignUp() {
   const [password, setpassword] = useState("");
   const [C_password, setC_password] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
 
@@ -121,35 +124,78 @@ if (response.ok) {
                 onChange={(e) => setphoneNo(e.target.value)}
               ></input>
               <label
-                className="text-start fw-medium "
-                style={{ color: "#646663" }}
-                htmlfor="password"
-              >
-                Create password*
-              </label>
+              className="text-start fw-medium "
+              style={{ color: "#646663" }}
+              htmlFor="password"
+            >
+              Create password*
+            </label>
+            <div className="position-relative">
               <input
-                style={{ border: "2px solid #9a9896ff", borderRadius: "6px" }}
-                type="text"
+                style={{ 
+                  border: "2px solid #9a9896ff", 
+                  borderRadius: "6px", 
+                  paddingRight: "40px", 
+                  width: "100%"  // Ensure full width
+                }}
+                type={showPassword ? "text" : "password"} // Use state for type
                 id="password"
                 required
                 value={password}
                 onChange={(e) => setpassword(e.target.value)}
-              ></input>
-              <label
-                className="text-start fw-medium "
-                style={{ color: "#646663" }}
-                htmlfor="password"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)} // Use new state
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
               >
-                Confirm password*
-              </label>
+                {/* Use new state here */}
+                {showPassword ? <BsEye /> :< BsEyeSlash />} 
+              </span>
+            </div>
+            {/* --- END: "Create password" field --- */}
+
+
+            {/* --- START: "Confirm password" field --- */}
+            <label
+              className="text-start fw-medium "
+              style={{ color: "#646663" }}
+              htmlFor="confirmPassword" // Corrected htmlFor
+            >
+              Confirm password*
+            </label>
+            <div className="position-relative">
               <input
-                style={{ border: "2px solid #9a9896ff", borderRadius: "6px" }}
-                type="password"
+                style={{ 
+                  border: "2px solid #9a9896ff", 
+                  borderRadius: "6px", 
+                  paddingRight: "40px", 
+                  width: "100%" // Ensure full width
+                }}
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 required
                 value={C_password}
                 onChange={(e) => setC_password(e.target.value)}
-              ></input>
+              />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showConfirmPassword ? <BsEye /> : <BsEyeSlash />}
+              </span>
+            </div>
               {passwordError && (
                 <p
                   style={{ color: "red", fontSize: "0.8rem", marginTop: "5px" }}
