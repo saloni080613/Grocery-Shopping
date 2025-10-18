@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 
@@ -206,12 +206,7 @@ if (response.ok) {
               <button type="submit" className="btn w-50 mt-4 btn-success ">
                 Register Now
               </button>
-              <div className="text-start text-small">
-                already have an account?{" "}
-                <Link to="/Login" style={{ color: "#0da308" }}>
-                  login now
-                </Link>
-              </div>
+              
             </form>
           </div>
         </div>
