@@ -160,4 +160,16 @@ public class OrderService {
 
         return itemDTO;
     }
+
+    public List<OrderHistoryDTO> getAllOrderHistory() {
+        // Step 1: Fetch ALL orders from the database.
+        List<Orders> allOrders = orderRepository.findAll();
+
+        // Step 2: Use the exact same mapping logic as before.
+        return allOrders.stream()
+                .map(this::mapOrderToHistoryDTO)
+                .collect(Collectors.toList());
+    }
+
+
 }

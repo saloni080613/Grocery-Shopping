@@ -16,15 +16,21 @@ import {
   BsHouseCheck,
   BsPerson,
   BsGeoAlt,
+  BsHourglassSplit,
+  BsXCircle,
+  BsExclamationCircle,
 } from "react-icons/bs";
 
 
 
 
 const statusMap = {
+  Pending: { icon: <BsHourglassSplit />, variant: "warning", step: 1 },
   Processing: { icon: <BsBoxSeam />, variant: "secondary", step: 1 },
   Shipped: { icon: <BsTruck />, variant: "info", step: 2 },
   Delivered: { icon: <BsHouseCheck />, variant: "success", step: 3 },
+  Cancelled: { icon: <BsXCircle />, variant: "danger", step: 0 },
+  Failed: { icon: <BsExclamationCircle />, variant: "danger", step: 0 },
 };
 
 export default function OrderTrack() {
@@ -103,7 +109,7 @@ export default function OrderTrack() {
                   {/* Left: Product Details */}
                   <Col md={7}>
                     <h5 className="mb-3 fs-6" style={{ color: "#043b0d" }}>
-                      Items in this Order
+                      Products
                     </h5>
                     {order.items.map((item) => (
                       <div
@@ -126,7 +132,7 @@ export default function OrderTrack() {
                             {item.quantity} x ₹{item.price.toFixed(2)}
                           </div>
                         </div>
-                        <div className="fw-bold">
+                        <div className="fw-bold" style={{ color: "#11651fff" }}>
                           ₹{(item.price * item.quantity).toFixed(2)}
                         </div>
                       </div>

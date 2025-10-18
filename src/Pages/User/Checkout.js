@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { BsPerson, BsGeoAlt } from "react-icons/bs";
 import {
   Container,
   Row,
@@ -186,7 +187,7 @@ export default function Checkout() {
   return (
     <section style={{ padding: "24px", background: "#f8f9fa" }}>
       <Container>
-        <h2 className="fw-bold mb-4" style={{ color: "#2d362f" }}>
+        <h2 className="fw-bold mb-4" style={{ color: "#043b0d" }}>
           Checkout
         </h2>
         <Row className="g-4">
@@ -212,7 +213,8 @@ export default function Checkout() {
 
             <Card className="shadow-sm border-0">
               <Card.Body className="p-4">
-                <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Customer Details</h4>
+                <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>
+                  <BsPerson className="me-2" />Customer Details</h4>
                 <Row className="mb-2">
                   <Col md={8}><Form.Label>Username:</Form.Label> <p className="fw-light">{customer.username}</p></Col>
                   <Col md={4}><Form.Label>Phone:</Form.Label> <p className="fw-light">{customer.phone}</p></Col>
@@ -221,7 +223,9 @@ export default function Checkout() {
                   <Col><Form.Label>Email:</Form.Label> <p className="fw-light">{customer.email}</p></Col>
                 </Row>
                 <hr />
-                <h5 className="mb-3 fs-6">Shipping Address</h5>
+                <h5 className="mb-3 fs-6">
+                  <BsGeoAlt className="me-2" />
+                  Shipping Address</h5>
                 <Form.Group className="mb-3">
                   {["Home", "Office", "Other", "None"].map((type) => (
                     <Form.Check inline key={type} type="radio" label={type} name="addressType" value={type} checked={selectedAddressType === type} onChange={handleAddressTypeChange} />
@@ -250,7 +254,7 @@ export default function Checkout() {
                 <h4 className="mb-3 fs-5" style={{ color: "#043b0d" }}>Order Summary</h4>
                 <div className="d-flex justify-content-between mb-2"><span>Subtotal</span><span>₹{totalAmount.toFixed(2)}</span></div>
                 <div className="d-flex justify-content-between mb-3 pb-3 border-bottom"><span>Shipping</span><span>Free</span></div>
-                <div className="d-flex justify-content-between fw-bold fs-5 mb-4"><span>Total</span><span>₹{totalAmount.toFixed(2)}</span></div>
+                <div className="d-flex justify-content-between fw-bold fs-5 mb-4" style={{ color: "#198754" }}><span>Total</span><span>₹{totalAmount.toFixed(2)}</span></div>
                 
                 <h5 className="mb-3 fs-6">Payment Method</h5>
                 <Form.Select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="mb-4">
@@ -261,7 +265,7 @@ export default function Checkout() {
                 </Form.Select>
 
                 <div className="d-grid">
-                  <Button onClick={handlePlaceOrder} disabled={isPlacingOrder} style={{ background: "#043b0d", border: "none", padding: "12px" }}>
+                  <Button variant="success" onClick={handlePlaceOrder} disabled={isPlacingOrder} style={{ padding: "12px" }}>
                     {isPlacingOrder ? (
                       <>
                         <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />

@@ -2,6 +2,7 @@ package com.Freshmart.store.controller;
 
 import com.Freshmart.store.dto.AddOrderItemRequestDTO;
 import com.Freshmart.store.dto.CreateOrderRequestDTO;
+import com.Freshmart.store.dto.OrderHistoryDTO;
 import com.Freshmart.store.model.Order_Items;
 import com.Freshmart.store.model.Orders;
 import com.Freshmart.store.service.OrderService;
@@ -18,6 +19,12 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @GetMapping
+    public ResponseEntity<List<OrderHistoryDTO>> getAllOrders() {
+        List<OrderHistoryDTO> allOrderHistory = orderService.getAllOrderHistory();
+        return ResponseEntity.ok(allOrderHistory);
+    }
 
     @PostMapping
     public ResponseEntity<?> createNewOrder(@RequestBody CreateOrderRequestDTO requestDTO) {
