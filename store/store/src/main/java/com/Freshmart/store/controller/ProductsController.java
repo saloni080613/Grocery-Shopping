@@ -12,12 +12,12 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductsController {
     @Autowired
-   private ProductsService productsService;
+private ProductsService productsService;
 
     @GetMapping("/list")
-   public List<NewProduct> GetAllProducts(){
-       return productsService.getProductsList();
-   }
+public List<NewProduct> GetAllProducts(){
+    return productsService.getProductsList();
+}
 
     @PostMapping("/details")
     public ResponseEntity<List<ProductResponseDTO>> getProductDetails(@RequestBody List<Integer> productIds) {

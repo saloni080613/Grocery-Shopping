@@ -27,6 +27,8 @@ import AdminHome from "./Pages/Admin/AdminHome";
 import AdminRegister from "./Pages/Admin/AdminRegister";
 import AdminProducts from "./Pages/Admin/AdminProducts";
 import AdminOrders from "./Pages/Admin/AdminOrders";
+import AdminAddProduct from "./Pages/Admin/AdminAddProduct"; // Import the new component
+import AdminEditProduct from "./Pages/Admin/AdminEditProduct";
 import AdminAccount from "./Pages/Admin/AdminAccount";
 
 function App() {
@@ -56,13 +58,15 @@ function App() {
           <Route path="account" element={<Account />} />
           <Route path="wishlist" element={<Wishlist />} />
           <Route path="SignUp" element={<SignUp />} />
-        <Route path="Login" element={<Login />} />
+          <Route path="Login" element={<Login />} />
         </Route>
 
         {/* --- Admin Routes --- */}
         <Route path="/admin" element={<Adminpanel />}>
           <Route index element={<AdminHome />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="products/add" element={<AdminAddProduct />} /> {/* Add the new route */}
+          <Route path="products/edit/:productId" element={<AdminEditProduct />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="register" element={<AdminRegister />} />
           <Route path="account" element={<AdminAccount />} />
