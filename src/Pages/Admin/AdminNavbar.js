@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function AdminNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const adminId = searchParams.get('adminId');
 
   return (
     <div>
@@ -23,7 +25,7 @@ export default function AdminNavbar() {
               <div className="nav-link fs-5 mt-3 active">
                 {/* FIX 1: Point to the admin index route */}
                 <Link
-                  to="/admin"
+                  to={`/admin?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Home
@@ -34,7 +36,7 @@ export default function AdminNavbar() {
               <div className="nav-link fs-5 mt-3 active">
                 {/* FIX 2: Add "/admin/" prefix */}
                 <Link
-                  to="/admin/products"
+                  to={`/admin/products?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Products
@@ -45,7 +47,7 @@ export default function AdminNavbar() {
               <div className="ms-3 fs-5 mt-3 nav-link">
                 {/* FIX 3: Add "/admin/" prefix */}
                 <Link
-                  to="/admin/orders"
+                  to={`/admin/orders?adminId=${adminId}`}
                   style={{ color: "#3a3d40", textDecoration: "none" }}
                 >
                   Orders
@@ -75,7 +77,7 @@ export default function AdminNavbar() {
                     }}
                   >
                     {/* FIX 4: Add "/admin/" prefix */}
-                    <Link className="dropdown-item " to="/admin/register">
+                    <Link className="dropdown-item " to={`/admin/register?adminId=${adminId}`}>
                       Add Admin
                     </Link>
                   </div>
@@ -87,7 +89,7 @@ export default function AdminNavbar() {
                       setIsOpen(false);
                     }}
                   >
-                    <Link className="dropdown-item" to="/accounts">
+                    <Link className="dropdown-item" to={`/admin/account?adminId=${adminId}`}>
                       My Account
                     </Link>
                   </div>

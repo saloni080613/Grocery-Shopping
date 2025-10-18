@@ -41,9 +41,7 @@ function App() {
       />
 
       <Routes>
-        {/* Standalone routes without Navbar/Footer */}
-        <Route path="/SignUp" element={<SignUp />} />
-        <Route path="/Login" element={<Login />} />
+      
 
         {/* --- User Routes --- */}
         <Route path="/" element={<UserLayout />}>
@@ -57,16 +55,17 @@ function App() {
           <Route path="search" element={<Search />} />
           <Route path="account" element={<Account />} />
           <Route path="wishlist" element={<Wishlist />} />
+          <Route path="SignUp" element={<SignUp />} />
+        <Route path="Login" element={<Login />} />
         </Route>
 
-        {/* --- Admin Routes (FIX 2: Changed to relative paths) --- */}
-        {/* The parent path is now "/admin" which is more conventional */}
+        {/* --- Admin Routes --- */}
         <Route path="/admin" element={<Adminpanel />}>
           <Route index element={<AdminHome />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="register" element={<AdminRegister />} />
-          <Route path="accounts" element={<AdminAccount/>} />
+          <Route path="account" element={<AdminAccount />} />
         </Route>
 
       </Routes>
