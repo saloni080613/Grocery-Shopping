@@ -107,10 +107,7 @@ export default function Checkout() {
   };
 
   const validateShippingAddress = () => {
-    if (selectedAddressType === "None") {
-      toast.error("Please select a shipping address type.");
-      return false;
-    }
+    
     const { street, city, state, postal_code } = shippingAddress;
     if (!street || !city || !state || !postal_code) {
       toast.error("Please fill all required address fields.");
@@ -159,6 +156,7 @@ export default function Checkout() {
       });
 
       toast.success(`Order placed successfully!`);
+      navigate(`/OrderTrack?customerId=${customerId}`);
      
 
     } catch (err) {

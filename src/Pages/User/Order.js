@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 
 export default function Order() {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const productId = queryParams.get("productId");
   const customerId = queryParams.get("customerId");
@@ -128,8 +129,6 @@ export default function Order() {
   };
 
   const validateShippingAddress = () => {
-    // When 'None' is selected, we are entering a new address, so it must be validated.
-    // The logic is the same for all cases now.
     const { street, city, state, postal_code } = shippingAddress;
     if (!street || !city || !state || !postal_code) {
       toast.error("Please fill all required address fields.");
@@ -170,8 +169,24 @@ export default function Order() {
         throw new Error(errorText || 'Failed to place order.');
       }
 
+      const savedOrder = await response.json();
+      const { orderId } = savedOrder;
+
+      // 2. Add item to the order
+      const itemsPayload = [{
+        productId: product.id,
+        product_quantity: quantity,
+        product_price: product.price,
+      }];
+
+      await fetch(`/api/orders/${orderId}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemsPayload),
+      });
+
       toast.success(`Order placed successfully!`);
-      
+      navigate(`/OrderTrack?customerId=${customerId}`);
 
     } catch (err) {
       toast.error(err.message || "Could not place order. Please try again.");

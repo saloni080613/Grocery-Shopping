@@ -1,7 +1,6 @@
 package com.Freshmart.store.service;
 
-import com.Freshmart.store.dto.AddOrderItemRequestDTO;
-import com.Freshmart.store.dto.CreateOrderRequestDTO;
+import com.Freshmart.store.dto.*;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.model.Order_Items;
 import com.Freshmart.store.model.Orders;
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -59,7 +59,7 @@ public class OrderService {
 
         // Step 3: Set server-side values like the order date and initial status.
         newOrder.setOrderDate(LocalDateTime.now());
-        newOrder.setStatus("Placed"); // Set a default status for new orders.
+        newOrder.setStatus("Pending"); // Set a default status for new orders.
 
         cartRepository.deleteByCustomerCustomerId(customer.getCustomerId());
 
@@ -89,5 +89,75 @@ public class OrderService {
 
         // Step 4: Save all the new items to the database in one operation.
         return orderItemRepository.saveAll(itemsToSave);
+    }
+
+    public List<OrderHistoryDTO> getOrderHistoryForCustomer(Integer customerId) {
+        // Step 1: Fetch all orders for the given customer.
+        List<Orders> customerOrders = orderRepository.findByCustomerCustomerId(customerId);
+
+        // Step 2: Map each Order entity to the complex OrderHistoryDTO.
+        return customerOrders.stream()
+                .map(this::mapOrderToHistoryDTO)
+                .collect(Collectors.toList());
+    }
+
+    // --- Helper method to orchestrate the mapping for a single order ---
+    private OrderHistoryDTO mapOrderToHistoryDTO(Orders order) {
+        OrderHistoryDTO historyDTO = new OrderHistoryDTO();
+
+        historyDTO.setOrderId("ORD-" + order.getOrderId());
+        historyDTO.setOrder_date(order.getOrderDate());
+        historyDTO.setTotal_amount(order.getTotalAmount());
+        historyDTO.setStatus(order.getStatus());
+
+        // Map the nested objects using other helpers
+        historyDTO.setCustomer(mapCustomerToInfoDTO(order.getCustomer()));
+        historyDTO.setShipping_address(mapOrderToShippingAddressDTO(order));
+
+        // Fetch and map the list of items for this order
+        List<Order_Items> items = orderItemRepository.findByOrderOrderId(order.getOrderId());
+        historyDTO.setItems(items.stream().map(this::mapOrderItemToDetailDTO).collect(Collectors.toList()));
+
+        return historyDTO;
+    }
+
+    // --- Helper to map customer details ---
+    private CustomerInfoDTO mapCustomerToInfoDTO(Customers customer) {
+        CustomerInfoDTO customerDTO = new CustomerInfoDTO();
+        customerDTO.setUsername(customer.getName());
+        customerDTO.setEmail(customer.getEmail());
+        customerDTO.setPhone_no(String.valueOf(customer.getPhone()));
+        return customerDTO;
+    }
+
+    // --- Helper to map shipping address from the order ---
+    private ShippingAddressDTO mapOrderToShippingAddressDTO(Orders order) {
+        ShippingAddressDTO addressDTO = new ShippingAddressDTO();
+        addressDTO.setStreet(order.getStreet());
+        addressDTO.setCity(order.getCity());
+        addressDTO.setState(order.getState());
+        addressDTO.setPostal_code(order.getPostalCode());
+        addressDTO.setCountry(order.getCountry());
+        return addressDTO;
+    }
+
+    // --- Helper to map a single order item ---
+    private OrderItemDetailDTO mapOrderItemToDetailDTO(Order_Items item) {
+        OrderItemDetailDTO itemDTO = new OrderItemDetailDTO();
+        Products product = item.getProduct(); // Get the associated product
+
+        itemDTO.setProduct_id(product.getProductId());
+        itemDTO.setProduct_name(product.getName());
+        itemDTO.setQuantity(item.getProductQuantity());
+        itemDTO.setPrice(item.getProductPrice()); // Price at the time of purchase
+        itemDTO.setImage_url(product.getImageUrl());
+
+        if (product.getCategory() != null) {
+            itemDTO.setCategory(product.getCategory().getCategoryName());
+        } else {
+            itemDTO.setCategory("Uncategorized");
+        }
+
+        return itemDTO;
     }
 }
