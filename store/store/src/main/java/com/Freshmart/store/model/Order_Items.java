@@ -18,6 +18,10 @@ public class Order_Items {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false) // This links the item to an order
+    private Orders order;
+
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -38,6 +42,9 @@ public class Order_Items {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Orders getOrder() { return order; }
+    public void setOrder(Orders order) { this.order = order; }
 
 
     public Products getProduct() {

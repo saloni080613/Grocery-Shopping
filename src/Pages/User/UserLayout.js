@@ -5,10 +5,9 @@ import Footer from './Footer';
 
 export default function UserLayout() {
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <main>
-       
+      <main style={{ flex: '1 0 auto' }}>
         <Outlet />
       </main>
       <Footer />

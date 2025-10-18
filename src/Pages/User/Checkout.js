@@ -23,9 +23,18 @@ export default function Checkout() {
   const [customer, setCustomer] = useState(null);
   const [selectedAddressType, setSelectedAddressType] = useState("Home");
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "India",
+    landmark: "",
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const fetchCheckoutData = useCallback(async () => {
     if (!customerId) {
@@ -64,35 +73,99 @@ export default function Checkout() {
         );
       });
       setCustomer({ ...customerData, addresses });
+
+      // Initialize shippingAddress with the default 'Home' address
+      const homeAddress = addresses.find(a => a.type === 'Home') || {};
+      setShippingAddress(homeAddress);
+
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  }, [customerId, navigate]);
+  }, [customerId, navigate]); // navigate is a dependency of fetchCheckoutData
 
   useEffect(() => {
     fetchCheckoutData();
   }, [fetchCheckoutData]);
 
   const handleAddressTypeChange = (e) => {
-    setSelectedAddressType(e.target.value);
+    const type = e.target.value;
+    setSelectedAddressType(type);
+    if (type === "None") {
+      setShippingAddress({ street: "", city: "", state: "", postal_code: "", country: "India", landmark: "" });
+    } else {
+      const newAddress = customer.addresses.find((addr) => addr.type === type) || {};
+      setShippingAddress(newAddress);
+    }
   };
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setCustomer((prev) => ({
-      ...prev,
-      addresses: prev.addresses.map((addr) =>
-        addr.type === selectedAddressType ? { ...addr, [name]: value } : addr
-      ),
-    }));
+    setShippingAddress(prev => ({ ...prev, [name]: value }));
   };
 
-  const handlePlaceOrder = () => {
-    // Future implementation: API call to place the order with all cart items
-    toast.success("Order placed successfully! (Simulation)");
+  const validateShippingAddress = () => {
+    if (selectedAddressType === "None") {
+      toast.error("Please select a shipping address type.");
+      return false;
+    }
+    const { street, city, state, postal_code } = shippingAddress;
+    if (!street || !city || !state || !postal_code) {
+      toast.error("Please fill all required address fields.");
+      return false;
+    }
+    return true;
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!validateShippingAddress()) {
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    const orderPayload = {
+      customerId: parseInt(customerId, 10),
+      total_amount: totalAmount,
+      total_quantity: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+      ...shippingAddress,
+    };
+
+    try {
+      // 1. Create the order
+      const orderResponse = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!orderResponse.ok) throw new Error('Failed to create order.');
+      const savedOrder = await orderResponse.json();
+      const { orderId } = savedOrder;
+
+      // 2. Add items to the order
+      const itemsPayload = cartItems.map(item => ({
+        productId: item.id,
+        product_quantity: item.quantity,
+        product_price: item.price,
+      }));
+
+      await fetch(`/api/orders/${orderId}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemsPayload),
+      });
+
+      toast.success(`Order placed successfully!`);
+     
+
+    } catch (err) {
+      toast.error(err.message || "Could not place order. Please try again.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   if (loading) {
@@ -110,11 +183,6 @@ export default function Checkout() {
 
   if (!cartItems.length || !customer) return null;
 
-  const activeAddress =
-    selectedAddressType === "None"
-      ? {}
-      : customer.addresses.find((addr) => addr.type === selectedAddressType) || {};
-  
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
@@ -162,16 +230,16 @@ export default function Checkout() {
                   ))}
                 </Form.Group>
                 <>
-                  <Form.Group className="mb-3"><Form.Control name="street" value={activeAddress.street || ''} onChange={handleAddressChange} placeholder="Street" /></Form.Group>
+                  <Form.Group className="mb-3"><Form.Control name="street" value={shippingAddress.street || ''} onChange={handleAddressChange} placeholder="Street" /></Form.Group>
                   <Row>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="city" value={activeAddress.city || ''} onChange={handleAddressChange} placeholder="City" /></Form.Group></Col>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="state" value={activeAddress.state || ''} onChange={handleAddressChange} placeholder="State" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="city" value={shippingAddress.city || ''} onChange={handleAddressChange} placeholder="City" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="state" value={shippingAddress.state || ''} onChange={handleAddressChange} placeholder="State" /></Form.Group></Col>
                   </Row>
                   <Row>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="postal_code" value={activeAddress.postal_code || ''} onChange={handleAddressChange} placeholder="Postal Code" /></Form.Group></Col>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="country" value={activeAddress.country || 'India'} onChange={handleAddressChange} placeholder="Country" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="postal_code" value={shippingAddress.postal_code || ''} onChange={handleAddressChange} placeholder="Postal Code" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="country" value={shippingAddress.country || 'India'} onChange={handleAddressChange} placeholder="Country" /></Form.Group></Col>
                   </Row>
-                  <Form.Group><Form.Control name="landmark" value={activeAddress.landmark || ''} onChange={handleAddressChange} placeholder="Landmark (Optional)" /></Form.Group>
+                  <Form.Group><Form.Control name="landmark" value={shippingAddress.landmark || ''} onChange={handleAddressChange} placeholder="Landmark (Optional)" /></Form.Group>
                 </>
               </Card.Body>
             </Card>
@@ -195,8 +263,15 @@ export default function Checkout() {
                 </Form.Select>
 
                 <div className="d-grid">
-                  <Button onClick={handlePlaceOrder} style={{ background: "#043b0d", border: "none", padding: "12px" }}>
-                    Place Order
+                  <Button onClick={handlePlaceOrder} disabled={isPlacingOrder} style={{ background: "#043b0d", border: "none", padding: "12px" }}>
+                    {isPlacingOrder ? (
+                      <>
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                        <span className="ms-2">Placing Order...</span>
+                      </>
+                    ) : (
+                      'Place Order'
+                    )}
                   </Button>
                 </div>
               </Card.Body>

@@ -26,6 +26,14 @@ export default function Order() {
   const [quantity, setQuantity] = useState(initialQuantity);
   const [selectedAddressType, setSelectedAddressType] = useState("Home");
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "India",
+    landmark: "",
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,6 +85,11 @@ export default function Order() {
         );
       });
       setCustomer({ ...customerData, addresses });
+
+      // Initialize shippingAddress with the default 'Home' address
+      const homeAddress = addresses.find(a => a.type === 'Home') || {};
+      setShippingAddress(homeAddress);
+
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -101,24 +114,23 @@ export default function Order() {
   const handleAddressTypeChange = (e) => {
     const type = e.target.value;
     setSelectedAddressType(type);
+    if (type === "None") {
+      setShippingAddress({ street: "", city: "", state: "", postal_code: "", country: "India", landmark: "" });
+    } else {
+      const newAddress = customer.addresses.find((addr) => addr.type === type) || {};
+      setShippingAddress(newAddress);
+    }
   };
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setCustomer((prev) => ({
-      ...prev,
-      addresses: prev.addresses.map((addr) =>
-        addr.type === selectedAddressType ? { ...addr, [name]: value } : addr
-      ),
-    }));
+    setShippingAddress(prev => ({ ...prev, [name]: value }));
   };
 
   const validateShippingAddress = () => {
-    // No validation needed if no address is being used
-    if (selectedAddressType === "None") {
-      return true;
-    }
-    const { street, city, state, postal_code } = activeAddress;
+    // When 'None' is selected, we are entering a new address, so it must be validated.
+    // The logic is the same for all cases now.
+    const { street, city, state, postal_code } = shippingAddress;
     if (!street || !city || !state || !postal_code) {
       toast.error("Please fill all required address fields.");
       return false;
@@ -138,12 +150,12 @@ export default function Order() {
       customerId: parseInt(customerId, 10),
       total_amount: totalAmount,
       total_quantity: quantity,
-      street: activeAddress.street || "",
-      city: activeAddress.city || "",
-      state: activeAddress.state || "",
-      postal_code: activeAddress.postal_code || "",
-      country: activeAddress.country || "India",
-      landmark: activeAddress.landmark || "",
+      street: shippingAddress.street || "",
+      city: shippingAddress.city || "",
+      state: shippingAddress.state || "",
+      postal_code: shippingAddress.postal_code || "",
+      country: shippingAddress.country || "India",
+      landmark: shippingAddress.landmark || "",
     };
 
     try {
@@ -183,12 +195,6 @@ export default function Order() {
 
   if (!product || !customer) return null;
 
-  // If 'None' is selected, use an empty object to clear the form for new input.
-  // Otherwise, find the corresponding address from the customer's data.
-  const activeAddress =
-    selectedAddressType === "None"
-      ? {}
-      : customer.addresses.find((addr) => addr.type === selectedAddressType) || {};
   const totalAmount = product.price * quantity;
 
   return (
@@ -238,16 +244,16 @@ export default function Order() {
                 </Form.Group>
                 {/* Address form is now always visible */}
                 <>
-                  <Form.Group className="mb-3"><Form.Control name="street" value={activeAddress.street || ''} onChange={handleAddressChange} placeholder="Street" /></Form.Group>
+                  <Form.Group className="mb-3"><Form.Control name="street" value={shippingAddress.street || ''} onChange={handleAddressChange} placeholder="Street" /></Form.Group>
                   <Row>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="city" value={activeAddress.city || ''} onChange={handleAddressChange} placeholder="City" /></Form.Group></Col>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="state" value={activeAddress.state || ''} onChange={handleAddressChange} placeholder="State" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="city" value={shippingAddress.city || ''} onChange={handleAddressChange} placeholder="City" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="state" value={shippingAddress.state || ''} onChange={handleAddressChange} placeholder="State" /></Form.Group></Col>
                   </Row>
                   <Row>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="postal_code" value={activeAddress.postal_code || ''} onChange={handleAddressChange} placeholder="Postal Code" /></Form.Group></Col>
-                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="country" value={activeAddress.country || 'India'} onChange={handleAddressChange} placeholder="Country" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="postal_code" value={shippingAddress.postal_code || ''} onChange={handleAddressChange} placeholder="Postal Code" /></Form.Group></Col>
+                    <Col md={6}><Form.Group className="mb-3"><Form.Control name="country" value={shippingAddress.country || 'India'} onChange={handleAddressChange} placeholder="Country" /></Form.Group></Col>
                   </Row>
-                  <Form.Group><Form.Control name="landmark" value={activeAddress.landmark || ''} onChange={handleAddressChange} placeholder="Landmark (Optional)" /></Form.Group>
+                  <Form.Group><Form.Control name="landmark" value={shippingAddress.landmark || ''} onChange={handleAddressChange} placeholder="Landmark (Optional)" /></Form.Group>
                 </>
               </Card.Body>
             </Card>

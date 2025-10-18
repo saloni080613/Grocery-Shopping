@@ -5,14 +5,12 @@ import Footer from '../User/Footer';
 
 export default function Adminpanel() {
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <AdminNavbar />
-      <main>
-        {/* Admin pages like AdminHome, AdminProducts will be rendered here */}
+      <main style={{ flex: '1 0 auto' }}>
         <Outlet />
       </main>
       <Footer/>
     </div>
   )
 }
-
