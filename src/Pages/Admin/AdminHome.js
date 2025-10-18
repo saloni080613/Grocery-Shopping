@@ -3,13 +3,13 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import { FaUsers, FaClipboardList, FaBoxOpen, FaRupeeSign } from 'react-icons/fa';
 
 const statIconStyle = {
-  color: '#adb5bd', // A muted gray for the icon
+  color: '#198754', // A lighter, standard green
 };
 
 const statValueStyle = {
   fontSize: '2.5rem',
   fontWeight: 700,
-  color: '#043b0d', // A dark green for emphasis, matching the theme
+  color: '#198754', // A lighter, standard green
   lineHeight: 1.2,
 };
 

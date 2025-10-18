@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 export default function AdminRegister() {
@@ -8,8 +10,11 @@ export default function AdminRegister() {
   const [password, setpassword] = useState("");
   const [C_password, setC_password] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const adminId = searchParams.get('adminId');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== C_password) {
       setPasswordError("Passwords do not match.");
@@ -17,12 +22,35 @@ export default function AdminRegister() {
     }
     setPasswordError("");
 
-    console.log("Username:", userName);
-    console.log("Email:", email);
-    console.log("Phone Number:", phoneNo);
-    console.log("Password:", password);
-    console.log("Confirm Password:", C_password);
+    const registerRequest = {
+      username: userName,
+      email: email,
+      mobileNo: phoneNo,
+      password: password,
+    };
+
+    try {
+      const response = await fetch('/api/auth/register/admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerRequest),
+      });
+
+      if (response.ok) {
+        toast.success('New admin registered successfully!');
+        // Navigate back to the admin home page, preserving the current admin's ID
+        navigate(`/admin?adminId=${adminId}`);
+      } else {
+        const errorMessage = await response.text();
+        toast.error(`Registration Failed: ${errorMessage}`);
+      }
+    } catch (error) {
+      toast.error('An error occurred during registration. Please try again.');
+    }
   };
+
   return (
     <div className="container">
       <div className="row align-items-center " style={{ marginTop: "10vh" }}>
