@@ -7,11 +7,20 @@ import com.Freshmart.store.model.Addresses;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AddressRepository;
 import com.Freshmart.store.repository.CustomerRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +32,17 @@ public class CustomerService {
     @Autowired
     private AddressRepository addressRepository;
 
-    /**
-     * This is your original method. The logic has not been changed.
-     * It logs out a customer by updating their status.
-     */
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // For hashing passwords (CRITICAL!)
+
+    // This reads the 'from' email address from your application.properties
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
+
     public Customers logoutCustomer(Integer customerId) {
         Optional<Customers> optionalCustomer = customerRepository.findById(customerId);
 
@@ -100,6 +116,81 @@ public class CustomerService {
 
         // Step 6: Convert the saved entity back to a DTO for the response.
         return convertToAddressDTO(savedAddress);
+    }
+
+    public void handleForgotPassword(String email, String siteURL)
+            throws MessagingException, UsernameNotFoundException {
+
+        // 1. Find customer by email
+        Customers customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No customer found with email: " + email));
+
+        // 2. Generate a unique token
+        String token = UUID.randomUUID().toString();
+        // 3. Set expiry time (e.g., 15 minutes from now)
+        LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(15);
+
+        // 4. Save the token and expiry date to the customer entity
+        customer.setResetPasswordToken(token);
+        customer.setResetTokenExpiryDate(expiryDate);
+        customerRepository.save(customer);
+
+        // 5. Create the full reset link and send the email
+        String resetLink = siteURL + token;
+        sendPasswordResetEmail(customer.getEmail(), resetLink);
+    }
+
+    /**
+     * Resets the user's password if the token is valid.
+     */
+    public void resetPassword(String token, String newPassword) {
+        // 1. Find customer by the reset token (we made this in CustomerRepository)
+        Customers customer = customerRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token."));
+
+        // 2. Check if the token is expired
+        if (customer.getResetTokenExpiryDate().isBefore(LocalDateTime.now())) {
+            // Token is expired, clear it and throw an error
+            customer.setResetPasswordToken(null);
+            customer.setResetTokenExpiryDate(null);
+            customerRepository.save(customer);
+            throw new RuntimeException("Expired token. Please request a new reset link.");
+        }
+
+        // 3. Token is valid! Hash the new password
+        String newHashedPassword = passwordEncoder.encode(newPassword);
+        customer.setPassword(newHashedPassword);
+
+        // 4. IMPORTANT: Invalidate the token by setting it to null
+        customer.setResetPasswordToken(null);
+        customer.setResetTokenExpiryDate(null);
+
+        // 5. Save the customer with the new password and nullified token
+        customerRepository.save(customer);
+    }
+
+    /**
+     * A private helper method to compose and send the email.
+     */
+    private void sendPasswordResetEmail(String toEmail, String resetLink) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true); // true = allow HTML
+
+        helper.setFrom(fromEmail);
+        helper.setTo(toEmail);
+        helper.setSubject("Password Reset Request for Freshmart");
+
+        // Basic HTML content for the email
+        String content = "<p>Hello,</p>"
+                + "<p>You have requested to reset your password for your Freshmart account.</p>"
+                + "<p>This link is valid for 15 minutes.</p>"
+                + "<p>Click the link below to change your password:</p>"
+                + "<p><a href=\"" + resetLink + "\" style=\"background-color: #4CAF50; color: white; padding: 10px 15px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;\">Change My Password</a></p>"
+                + "<br>"
+                + "<p>If you did not make this request, please ignore this email.</p>";
+
+        helper.setText(content, true); // true = this text is HTML
+        mailSender.send(message);
     }
 
     // --- Helper Methods ---

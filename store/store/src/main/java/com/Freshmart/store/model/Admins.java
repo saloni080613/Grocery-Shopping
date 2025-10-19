@@ -14,7 +14,7 @@ public class Admins {
     @Column(name = "name", nullable = false, length = 100) // Matches your 'name' column
     private String name;
 
-    @Column(name = "password", nullable = false, length = 20) // Matches your 'password' column
+    @Column(name = "password", nullable = false, length = 60) // Matches your 'password' column
     private String password;
 
     @Column(name = "phone", nullable = false, unique = true) // Matches your 'phone' column (BIGINT -> Long)

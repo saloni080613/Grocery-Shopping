@@ -5,14 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-
-// --- ADD THESE IMPORTS ---
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
-// -------------------------
-
 
 @Configuration
 @EnableWebSecurity
@@ -20,22 +16,34 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // --- ADD THIS LINE TO APPLY THE CORS CONFIGURATION ---
+        // Apply CORS configuration
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        // ----------------------------------------------------
 
-        // Your existing configuration
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            )
-            .httpBasic(httpBasic -> {})
-            .formLogin(form -> form.disable());
+        // Disable CSRF
+        http.csrf(csrf -> csrf.disable());
+
+        // Configure authorization rules
+        http.authorizeHttpRequests(auth -> auth
+                // --- Using wildcards for more flexible matching ---
+                .requestMatchers("/api/auth/login/**").permitAll()
+                .requestMatchers("/api/auth/register/**").permitAll()
+                .requestMatchers("/api/auth/forgot-password/**").permitAll()
+                .requestMatchers("/api/auth/reset-password/**").permitAll()
+                .requestMatchers("/api/products/list/**").permitAll()
+                .requestMatchers("/api/categories/name/**").permitAll()
+                .requestMatchers("/api/auth/logout/**").permitAll()
+
+                // All other requests must be authenticated
+                .anyRequest().authenticated()
+        );
+
+        // Disable the default form login and httpBasic
+        http.httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable());
+
         return http.build();
     }
 
-    // --- ADD THIS ENTIRE BEAN METHOD ---
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -53,5 +61,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    // ------------------------------------
 }

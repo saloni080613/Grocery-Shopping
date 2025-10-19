@@ -19,8 +19,10 @@ CREATE TABLE Customers (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone BIGINT NOT NULL UNIQUE,
-    password VARCHAR(20) NOT NULL,
+    password VARCHAR(60) NOT NULL,
     status ENUM('logged_in', 'logged_out') DEFAULT 'logged_out',
+    reset_password_token VARCHAR(255) DEFAULT NULL UNIQUE,
+	reset_token_expiry_date DATETIME DEFAULT NULL,
     CONSTRAINT chk_phone_length CHECK (phone >= 1000000000 AND phone <= 9999999999)
 );
 
@@ -115,7 +117,7 @@ CREATE TABLE Wishlist (
 CREATE TABLE Admins (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    password VARCHAR(20) NOT NULL,
+    password VARCHAR(60) NOT NULL,
     phone BIGINT NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     status ENUM('logged_in', 'logged_out') DEFAULT 'logged_out',
@@ -128,7 +130,7 @@ CREATE TABLE Admins (
 INSERT INTO Categories (category_name)
 VALUES ('Vegetables'), ('Dairy'), ('Sprouts');
 
-insert into Admins values (1,'Meet','password',7021431706,"meetj366@gmail.com",'logged_out');
+insert into Admins values (1,'Meet','$2a$10$CJNGhu0S6xZDGpl1MFvrKO7lsX2UTeMBcqABf5ryPy08UmoLew70u',7021431706,"meetj366@gmail.com",'logged_out');
 
 INSERT INTO Products (name, price, image_url, stock_quantity, category_id)
 VALUES

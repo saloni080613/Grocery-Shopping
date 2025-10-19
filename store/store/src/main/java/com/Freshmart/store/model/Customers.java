@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "Customers")
 public class Customers {
@@ -25,11 +27,33 @@ public class Customers {
     @Column(name = "phone", nullable = false, unique = true)
     private Long phone;
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 60)
     private String password;
 
     @Column(name = "status", length = 20)
     private String status;
+
+    @Column(name = "reset_password_token", unique = true)
+    private String resetPasswordToken;
+
+    @Column(name = "reset_token_expiry_date")
+    private LocalDateTime resetTokenExpiryDate;
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public LocalDateTime getResetTokenExpiryDate() {
+        return resetTokenExpiryDate;
+    }
+
+    public void setResetTokenExpiryDate(LocalDateTime resetTokenExpiryDate) {
+        this.resetTokenExpiryDate = resetTokenExpiryDate;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken ) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
 
     public Customers() {}
 
