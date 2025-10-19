@@ -24,14 +24,13 @@ public class SecurityConfig {
 
         // Configure authorization rules
         http.authorizeHttpRequests(auth -> auth
-                // --- Using wildcards for more flexible matching ---
-                .requestMatchers("/api/auth/login/**").permitAll()
-                .requestMatchers("/api/auth/register/**").permitAll()
-                .requestMatchers("/api/auth/forgot-password/**").permitAll()
-                .requestMatchers("/api/auth/reset-password/**").permitAll()
-                .requestMatchers("/api/products/list/**").permitAll()
-                .requestMatchers("/api/categories/name/**").permitAll()
-                .requestMatchers("/api/auth/logout/**").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/forgot-password").permitAll()
+                .requestMatchers("/api/auth/reset-password").permitAll()
+                .requestMatchers("/api/products/list").permitAll()
+                .requestMatchers("/api/categories/name").permitAll()
+                .requestMatchers("/api/auth/logout").permitAll()
 
                 // All other requests must be authenticated
                 .anyRequest().authenticated()

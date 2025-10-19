@@ -2,6 +2,8 @@ package com.Freshmart.store.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "Admins") // Matches your table name
 public class Admins {
@@ -25,6 +27,27 @@ public class Admins {
 
     @Column(name = "status") // Matches your 'status' column
     private String status = "logged_out"; // Sets the default value in Java
+    @Column(name = "reset_password_token", unique = true)
+    private String resetPasswordToken;
+
+    @Column(name = "reset_token_expiry_date")
+    private LocalDateTime resetTokenExpiryDate;
+
+    public LocalDateTime getResetTokenExpiryDate() {
+        return resetTokenExpiryDate;
+    }
+
+    public void setResetTokenExpiryDate(LocalDateTime resetTokenExpiryDate) {
+        this.resetTokenExpiryDate = resetTokenExpiryDate;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
 
     // A no-argument constructor is required by JPA
     public Admins() {}

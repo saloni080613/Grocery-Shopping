@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 // Common Pages
+import ForgetPasswordPage from "./Common/ForgetPasswordPage";
+import ResetPasswordPage from "./Common/ResetPasswordPage";
 import SignUp from "./Common/SignUp";
 import Login from "./Common/Login";
 
@@ -43,7 +45,8 @@ function App() {
       />
 
       <Routes>
-      
+      <Route path="/forgot-password" element={<ForgetPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* --- User Routes --- */}
         <Route path="/" element={<UserLayout />}>

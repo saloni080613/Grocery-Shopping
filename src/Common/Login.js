@@ -30,7 +30,7 @@ export default function Login() {
 
       if (response.ok) {
         const responseData = await response.json();
-        const { userId } = responseData; // Correctly get userId from the response
+        const { userId } = responseData; 
 
         if (userIs === 'Customer') {
           navigate(`/?customerId=${userId}`);
@@ -94,14 +94,22 @@ export default function Login() {
               <input
                 style={{ border: "2px solid #9a9896ff", borderRadius: "6px" }}
                 type="password"
-                id="confirmPassword"
+                id="password"
                 required
                 value={password}
                 onChange={(e) => setpassword(e.target.value)}
               ></input>
+              <div className="text-end">
+                <button
+                  type="button"
+                  className="btn btn-link text-decoration-none"
+                  style={{ color: "#0da308" }}
+                  onClick={() => navigate('/forgot-password')}
+                >Forgot Password?</button>
+              </div>
               <button
                 type="submit"
-                className="btn w-50 mt-4 btn-success "
+                className="btn w-50 mt-2 btn-success "
               >
                 Login
               </button>

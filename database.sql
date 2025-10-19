@@ -120,6 +120,8 @@ CREATE TABLE Admins (
     password VARCHAR(60) NOT NULL,
     phone BIGINT NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
+	reset_password_token VARCHAR(255) DEFAULT NULL UNIQUE,
+	reset_token_expiry_date DATETIME DEFAULT NULL,
     status ENUM('logged_in', 'logged_out') DEFAULT 'logged_out',
     CONSTRAINT chk_admin_phone_length CHECK (phone >= 1000000000 AND phone <= 9999999999)
 );
@@ -130,7 +132,7 @@ CREATE TABLE Admins (
 INSERT INTO Categories (category_name)
 VALUES ('Vegetables'), ('Dairy'), ('Sprouts');
 
-insert into Admins values (1,'Meet','$2a$10$CJNGhu0S6xZDGpl1MFvrKO7lsX2UTeMBcqABf5ryPy08UmoLew70u',7021431706,"meetj366@gmail.com",'logged_out');
+insert into Admins(admin_id, name, password, phone, email, status) values (1,'Meet','$2a$10$CJNGhu0S6xZDGpl1MFvrKO7lsX2UTeMBcqABf5ryPy08UmoLew70u',7021431706,"meetj366@gmail.com",'logged_out');
 
 INSERT INTO Products (name, price, image_url, stock_quantity, category_id)
 VALUES

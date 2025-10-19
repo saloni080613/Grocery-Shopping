@@ -1,13 +1,10 @@
 package com.Freshmart.store.controller;
 
-import com.Freshmart.store.dto.ForgotPasswordRequest;
-import com.Freshmart.store.dto.ResetPasswordRequest;
-import jakarta.mail.MessagingException;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import com.Freshmart.store.dto.LoginRequest;
-import com.Freshmart.store.dto.RegisterRequest;
+import com.Freshmart.store.dto.*;
+import com.Freshmart.store.service.AuthService;
+import com.Freshmart.store.dto.ApiResponse;
+import com.Freshmart.store.dto.PasswordDtos.ForgotPasswordRequest;
+import com.Freshmart.store.dto.PasswordDtos.ResetPasswordRequest;
 import com.Freshmart.store.model.Admins;
 import com.Freshmart.store.model.Customers;
 import com.Freshmart.store.repository.AdminRepository;
@@ -41,6 +38,8 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
 
 
     // --- EXISTING CUSTOMER REGISTRATION ---
@@ -145,40 +144,28 @@ public class AuthController {
         return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
     }
 
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         try {
-            // Your React app's URL
-            String resetLink = "http://localhost:3000/reset-password?token=";
-            customerService.handleForgotPassword(request.getEmail(), resetLink);
-
-            // For security, always return a generic success message
-            // This prevents attackers from guessing valid emails
-            return ResponseEntity.ok(Map.of("message", "If an account with this email exists, a password reset link has been sent."));
-
-        } catch (UsernameNotFoundException e) {
-            // Log the error but send the same generic response
-            System.err.println("Forgot password attempt for non-existent email: " + request.getEmail());
-            return ResponseEntity.ok(Map.of("message", "If an account with this email exists, a password reset link has been sent."));
-
-        } catch (MessagingException e) {
-            // This is a server error (e.g., mail server is down)
-            System.err.println("Mail sending error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Error: Could not send email. Please try again later."));
+            String result = authService.forgotPassword(request.getEmail());
+            // Wrap the success message in the ApiResponse object
+            return ResponseEntity.ok(new ApiResponse(result));
+        } catch (RuntimeException e) {
+            // Wrap the error message in the ApiResponse object
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
         }
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
-            // Call the service to validate the token and update the password
-            customerService.resetPassword(request.getToken(), request.getNewPassword());
-            return ResponseEntity.ok(Map.of("message", "Password has been reset successfully."));
-
+            String result = authService.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok(new ApiResponse(result));
         } catch (RuntimeException e) {
-            // This will catch our "Invalid token" or "Expired token" errors
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
         }
     }
 

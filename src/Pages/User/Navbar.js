@@ -34,6 +34,7 @@ export default function Navbar() {
 
         if (response.ok) {
           setUserState(false);
+           toast.success('Logout successful!');
           navigate('/');
         } else {
           const errorText = await response.text();
