@@ -38,6 +38,17 @@ public class OrderController {
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
+    @PostMapping("/single")
+    public ResponseEntity<?> createNewSingleOrder(@RequestBody CreateOrderRequestDTO requestDTO) {
+        Orders createdOrder = orderService.createSingleOrder(requestDTO);
+
+        if (createdOrder == null) {
+            return new ResponseEntity<>("Customer not found with ID: " + requestDTO.getCustomerId(), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }
+
     @PostMapping("/{orderId}/items")
     public ResponseEntity<List<Order_Items>> addItemsToOrder(
             @PathVariable Integer orderId,

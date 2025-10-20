@@ -159,7 +159,7 @@ export default function Order() {
     };
 
     try {
-      const response = await fetch('/api/orders', {
+      const response = await fetch('/api/orders/single', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
