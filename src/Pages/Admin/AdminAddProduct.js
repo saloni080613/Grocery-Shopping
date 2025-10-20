@@ -123,21 +123,23 @@ export default function AdminAddProduct() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!product.name || !product.category || !product.price || !product.stock) {
+    if (!product.name || !product.category || !product.price || !product.stock || !product.image) {
       toast.error('Please fill in all required fields (Name, Category, Price).');
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const response = await fetch('/api/products/add', {
+      const response = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...product,
+          name: product.name,
           price: parseFloat(product.price), // Ensure price is a number
-          stock: parseInt(product.stock, 10) || 0, // Ensure stock is a number, default to 0
-          inStock: (parseInt(product.stock, 10) || 0) > 0, // Derive inStock status
+          stockQuantity: parseInt(product.stock, 10) || 0, // Ensure stock is a number, default to 0
+          image:product.image,
+          categoryName: product.category,
+          
         }),
       });
 

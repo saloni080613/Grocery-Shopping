@@ -28,9 +28,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register").permitAll()
                 .requestMatchers("/api/auth/forgot-password").permitAll()
                 .requestMatchers("/api/auth/reset-password").permitAll()
-                .requestMatchers("/api/products/list").permitAll()
-                .requestMatchers("/api/categories/name").permitAll()
-                .requestMatchers("/api/auth/logout").permitAll()
+                .requestMatchers("/api/products/**").permitAll()
+                .requestMatchers("/api/admin/products/**").permitAll()
+                .requestMatchers("/api/categories/**").permitAll()
+                .requestMatchers("/api/auth/logout/**").permitAll()
 
                 // All other requests must be authenticated
                 .anyRequest().authenticated()

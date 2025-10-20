@@ -104,18 +104,18 @@ export default function AdminEditProduct() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const response = await fetch(`/api/products/update/${productId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...product,
-          price: parseFloat(product.price),
-          stock: parseInt(product.stock, 10) || 0,
-          inStock: (parseInt(product.stock, 10) || 0) > 0,
-        }),
-      });
-
+  try {
+  const response = await fetch(`/api/admin/products/${product.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: product.name,
+      price: parseFloat(product.price),
+      stockQuantity: parseInt(product.stock, 10) || 0,
+      image: product.image,
+      categoryName: product.category,
+    }),
+  });
       if (!response.ok) {
         const errorData = await response.text();
         throw new Error(errorData || 'Failed to update product');

@@ -2,10 +2,11 @@ package com.Freshmart.store.repository;
 
 import com.Freshmart.store.model.Categories;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional; // Make sure to import Optional
 
-@Repository
 public interface CategoriesRepository extends JpaRepository<Categories, Integer> {
+
+    // --- NEW METHOD ---
+    // This allows the service to check if a category already exists.
+    Optional<Categories> findByCategoryName(String categoryName);
 }
-
-

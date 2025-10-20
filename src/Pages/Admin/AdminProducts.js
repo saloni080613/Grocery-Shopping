@@ -115,17 +115,28 @@ export default function AdminProducts() {
   }, []);
 
   const handleEdit = (productId) => {
-    navigate(`/admin/products/edit/${productId}?adminId=${adminId || ''}`);
+    navigate(`/admin/products/edit/${productId}?adminId=${adminId || ""}`);
   };
 
   const handleDelete = async (productId, productName) => {
-    // Placeholder for delete logic
     if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
-      toast.success(`(Simulated) Deleting product: ${productName}`);
-      // Here you would call the delete API:
-      // await fetch(`/api/products/delete/${productId}`, { method: 'DELETE' });
-      // And then refresh the list:
-      // setProducts(prev => prev.filter(p => p.id !== productId));
+      try {
+        const response = await fetch(`/api/admin/products/${productId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Failed to delete product.');
+        }
+
+        toast.success(`Product "${productName}" deleted successfully.`);
+        // Refresh the list by removing the deleted product from state
+        setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+
+      } catch (error) {
+        toast.error(`Error: ${error.message}`);
+      }
     }
   };
 
