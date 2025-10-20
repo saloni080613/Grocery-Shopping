@@ -24,17 +24,10 @@ public class SecurityConfig {
 
         // Configure authorization rules
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/api/auth/register").permitAll()
-                .requestMatchers("/api/auth/forgot-password").permitAll()
-                .requestMatchers("/api/auth/reset-password").permitAll()
-                .requestMatchers("/api/products/**").permitAll()
-                .requestMatchers("/api/admin/products/**").permitAll()
-                .requestMatchers("/api/categories/**").permitAll()
-                .requestMatchers("/api/auth/logout/**").permitAll()
+
 
                 // All other requests must be authenticated
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
         );
 
         // Disable the default form login and httpBasic

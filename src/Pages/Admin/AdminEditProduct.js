@@ -167,12 +167,12 @@ export default function AdminEditProduct() {
 
         <div style={inputGroupStyle}>
           <label htmlFor="image" style={labelStyle}>Image URL</label>
-          <input type="text" id="image" name="image" value={product.image} onChange={handleChange} style={inputStyle} />
+          <input type="text" id="image" name="image" value={product.image_url} onChange={handleChange} style={inputStyle} />
         </div>
 
         <div style={inputGroupStyle}>
           <label htmlFor="stock" style={labelStyle}>Stock Quantity</label>
-          <input type="number" id="stock" name="stock" value={product.stock} onChange={handleChange} style={inputStyle} min="0" required />
+          <input type="number" id="stock" name="stock" value={product.stock_quantity} onChange={handleChange} style={inputStyle} min="0" required />
         </div>
 
         <button type="submit" style={buttonStyle} disabled={isSubmitting}>
