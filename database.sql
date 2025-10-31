@@ -70,7 +70,7 @@ CREATE TABLE Orders (
     postal_code VARCHAR(20) NOT NULL,
     country VARCHAR(50) DEFAULT 'India',
     landmark VARCHAR(50),
-    status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Failed') NOT NULL DEFAULT 'Pending',
+    status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Failed', 'Cancelled') NOT NULL DEFAULT 'Pending',
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
 );
 
