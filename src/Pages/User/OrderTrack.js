@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
   Badge,
+  Button,
 } from "react-bootstrap";
 import {
   BsBoxSeam,
@@ -20,6 +21,7 @@ import {
   BsXCircle,
   BsExclamationCircle,
 } from "react-icons/bs";
+import toast from "react-hot-toast";
 
 
 
@@ -65,6 +67,38 @@ export default function OrderTrack() {
     fetchOrders();
   }, [customerId]);
 
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+
+    try {
+      const numericOrderId = parseInt(orderId.replace("ORD-", ""), 10);
+      if (isNaN(numericOrderId)) {
+        toast.error(`Invalid Order ID format: ${orderId}`);
+        return;
+      }
+
+      const response = await fetch(`/api/orders/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: numericOrderId, status: "Cancelled" }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to cancel order.");
+      }
+
+      // Update local state to reflect the change immediately
+      setOrders((prevOrders) =>
+        prevOrders.map((o) => (o.orderId === orderId ? { ...o, status: "Cancelled" } : o))
+      );
+      toast.success(`Order #${orderId} has been cancelled.`);
+    } catch (err) {
+      toast.error(err.message || "Could not cancel the order.");
+    }
+  };
   if (loading) {
     return (
       <div className="text-center p-5">
@@ -174,8 +208,19 @@ export default function OrderTrack() {
                   </Col>
                 </Row>
               </Card.Body>
-              <Card.Footer className="text-end bg-white border-top-0 p-3">
-                <span className="fs-5 fw-bold">
+              <Card.Footer className="d-flex justify-content-between align-items-center bg-white border-top-0 p-3">
+                <div>
+                  {["Pending", "Processing"].includes(order.status) && (
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleCancelOrder(order.orderId)}
+                    >
+                      Cancel Order
+                    </Button>
+                  )}
+                </div>
+                <span className="fs-5 fw-bold" style={{ color: "#198754" }}>
                   Total: ₹{order.total_amount.toFixed(2)}
                 </span>
               </Card.Footer>

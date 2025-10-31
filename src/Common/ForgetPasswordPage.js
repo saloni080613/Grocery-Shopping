@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const ForgotPasswordPage = () => {
     const [emailId, setEmail] = useState("");
@@ -8,6 +9,7 @@ const ForgotPasswordPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        toast.success('Processing your request...');
         setMessage(""); // Clear previous messages
         setIsSuccess(null); // Reset status on new submission
         

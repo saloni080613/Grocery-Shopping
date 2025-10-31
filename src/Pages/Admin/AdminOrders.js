@@ -9,7 +9,7 @@ import {
   Image,
   Form,
 } from "react-bootstrap";
-import { BsPerson, BsGeoAlt } from "react-icons/bs";
+import { BsPerson, BsGeoAlt, BsXCircle } from "react-icons/bs";
 import toast from "react-hot-toast";
 
 // Status options for the dropdown
@@ -115,17 +115,24 @@ export default function AdminOrders() {
                   {new Date(order.order_date).toLocaleDateString()}
                 </div>
                 <div className="d-flex align-items-center">
-                  <span className="me-2">Status:</span>
-                  <Form.Select
-                    size="sm"
-                    value={order.status}
-                    onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                    style={{ width: '150px' }}
-                  >
-                    {statusOptions.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </Form.Select>
+                  <span className="me-2 fw-bold">Status:</span>
+                  {order.status === "Cancelled" ? (
+                    <span className="text-danger fw-bold">
+                      <BsXCircle className="me-1" />
+                      Cancelled
+                    </span>
+                  ) : (
+                    <Form.Select
+                      size="sm"
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                      style={{ width: '150px' }}
+                    >
+                      {statusOptions.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </Form.Select>
+                  )}
                 </div>
               </Card.Header>
               <Card.Body className="p-4">
