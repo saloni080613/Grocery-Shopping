@@ -130,23 +130,39 @@ CREATE TABLE Admins (
 
 
 INSERT INTO Categories (category_name)
-VALUES ('Vegetables'), ('Dairy'), ('Sprouts');
+VALUES ('Fresh Vegetables & Fruits'),('Dairy, Bread & Eggs'),('Grains, Pulses & Oils'),('Snacks & Beverages'),('Household & Personal Care');
 
 insert into Admins(admin_id, name, password, phone, email, status) values (1,'Meet','$2a$10$CJNGhu0S6xZDGpl1MFvrKO7lsX2UTeMBcqABf5ryPy08UmoLew70u',7021431706,"meetj366@gmail.com",'logged_out');
 
 INSERT INTO Products (name, price, image_url, stock_quantity, category_id)
-VALUES
-('Tomato', 30.00, 'https://images-prod.healthline.com/hlcmsresource/images/AN_images/tomatoes-1296x728-feature.jpg', 100, 1),
-('Onion', 25.00, 'https://thumbs.dreamstime.com/b/pile-red-onions-background-heads-im-market-132370194.jpg', 120, 1),
-('Spinach', 20.00, 'https://tse4.mm.bing.net/th/id/OIP.smwnzgY1bOPNdwFTx8DlGwHaJB?rs=1&pid=ImgDetMain&o=7&rm=3', 80, 1),
-('Cow Milk (1L)', 45.00, 'https://images.unsplash.com/photo-1563636619-e9143da7973b?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 50, 2),
-('Paneer (500g)', 200.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcmNKVOO1qOY1ptp6PqpnnBiMjrjBllaMmAA&s', 3, 2),
-('Buttermilk (500ml)', 30.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcxPua7fw57H8uKzt2OIrNgxXHV4yoem7kxw&s', 40, 2),
-('Green Gram (Moong)', 60.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtrlC-EfvUF6vI4Rnwd7G_9yJLeJfadWxfIw&s', 0, 3),
-('Moth Bean (Matki)', 70.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOA9nxDhK-6dSNbfStslxCf0TuJ5YqdCh7ag&s', 50, 3),
-('Chickpea (Chana)', 80.00, 'https://www.shayonauk.com/cdn/shop/files/FudcoChickpeasWM_5782d60e-f8a9-4a7a-a6a5-1a9540e12fb8.jpg?v=1720469999', 45, 3);
+VALUES 
+-- Category 1: Fresh Vegetables & Fruits
+('Tomato (1kg)', 40.00, 'https://plus.unsplash.com/premium_photo-1669906333449-5fc2c47cd8ec?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8dG9tYXRvfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500', 150, 1),
+('Onion (1kg)', 35.00, 'https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8b25pb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 200, 1),
+('Potato (1kg)', 30.00, 'https://plus.unsplash.com/premium_photo-1724256031339-6b90e3b61aa1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHBvdGF0b3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 180, 1),
+('Spinach (1 Bunch)', 20.00, 'https://plus.unsplash.com/premium_photo-1701714006884-30414c114152?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170', 0, 1),
+('Apple - Royal Gala (1kg)', 180.00, 'https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a', 70, 1),
+('Banana - Robusta (1 Dozen)', 60.00, 'https://images.unsplash.com/photo-1528825871115-3581a5387919', 90, 1),
 
+-- Category 2: Dairy, Bread & Eggs
+('Fresh Toned Milk (1L Carton)', 55.00, 'https://images.unsplash.com/photo-1602153508753-4ace888c10a0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWlsa3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 60, 2),
+('Fresh Paneer (200g Block)', 90.00, 'https://plus.unsplash.com/premium_photo-1726079619679-3b947c951a7c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZnJlc2glMjBwYW5lZXIlMjBibG9ja3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 30, 2),
+('Classic Bread (400g Loaf)', 45.00, 'https://images.unsplash.com/photo-1615329399228-5d5d98a40e35?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YnJvd24lMjBicmVhZHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 50, 2),
+('Classic White Eggs (12 Pack)', 85.00, 'https://plus.unsplash.com/premium_photo-1700004502440-aed2c0d909d8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Q2xhc3NpYyUyMFdoaXRlJTIwRWdncyUyMCgxMiUyMFBhY2spfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500', 45, 2),
 
+-- Category 3: Grains, Pulses & Oils
+('Moong Dal (1kg)', 140.00, 'https://images.unsplash.com/photo-1694679671688-3d9bb5e77f37?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8TW9vbmclMjBEYWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 50, 3),
+('Basmati Rice (1kg)', 110.00, 'https://images.unsplash.com/photo-1686820740687-426a7b9b2043?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YmFzbWF0aSUyMHJpY2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 80, 3),
+('Olive Oil (1L Bottle)', 150.00, 'https://images.unsplash.com/photo-1757801333112-7b89af15c7fe?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c3VuZmxvd2VyJTIwb2lsJTIwYm90dGxlfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500', 60, 3),
+
+-- Category 4: Snacks & Beverages
+('Potato Chips - Classic Salted (90g)', 30.00, 'https://images.unsplash.com/photo-1694101493243-864532ed5bce?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cG90YXRvJTIwY2hpcHMlMjBiYWd8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 100, 4),
+('Instant Coffee (50g Jar)', 145.00, 'https://images.unsplash.com/photo-1663404846161-4cb9d88e5342?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGluc3RhbnQlMjBjb2ZmZWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 75, 4),
+('Orange Juice (1L Carton)', 120.00, 'https://images.unsplash.com/photo-1694886712783-5eefee63cedc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8b3JhbmdlJTIwanVpY2UlMjBib3R0bGV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500', 65, 4),
+
+-- Category 5: Household & Personal Care
+('Liquid Handwash (250ml Pump)', 99.00, 'https://images.unsplash.com/photo-1694101395693-1a4e5d364ae1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c29hcCUyMCUyMGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 80, 5),
+('Toilet Paper (4-in-1 Pack)', 130.00, 'https://images.unsplash.com/photo-1584556812952-905ffd0c611a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHRvaWxldCUyMHBhcGVyJTIwcm9sbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500', 90, 5);
 
 -- Final SELECT statements
 SELECT * FROM Customers;

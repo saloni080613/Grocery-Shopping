@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -41,18 +41,20 @@ export default function OrderTrack() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
       if (!customerId) {
-        setError("Customer ID not found. Please log in.");
         setLoading(false);
         return;
       }
       try {
         const response = await fetch(`/api/customers/${customerId}/orders`);
         if (!response.ok) {
-          throw new Error("Failed to fetch your orders. Please try again later.");
+          throw new Error(
+            "Failed to fetch your orders. Please try again later."
+          );
         }
         const data = await response.json();
         // Assuming the API returns orders sorted by date, otherwise you might want to sort them here.
@@ -110,6 +112,24 @@ export default function OrderTrack() {
 
   if (error) {
     return <Alert variant="danger" className="m-4">{error}</Alert>;
+  }
+
+  if (!customerId) {
+    return (
+      <div
+        style={{
+          background: "#fff",
+          padding: "24px",
+          borderRadius: 8,
+          textAlign: "center",
+        }}
+      >
+        <p>To access order history, please login first.</p>
+        <button onClick={() => navigate(`/login`)} className="btn btn-dark">
+          please login to continue
+        </button>
+      </div>
+    );
   }
 
   return (

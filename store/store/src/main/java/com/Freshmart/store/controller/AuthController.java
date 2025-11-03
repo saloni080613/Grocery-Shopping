@@ -141,7 +141,7 @@ public class AuthController {
         }
 
         // If we get here, user not found or password didn't match
-        return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
+        return ResponseEntity.status(401).body(new ApiResponse("invalid credential"));
     }
 
     @Autowired

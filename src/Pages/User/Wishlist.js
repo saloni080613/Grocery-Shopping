@@ -221,6 +221,7 @@ export default function Wishlist() {
 
    if (!customerId) {
     return <div style={{ background: '#fff', padding: '24px', borderRadius: 8, textAlign: 'center' }}>
+      <p>To access wishlist, please login first.</p>
           <button onClick={() => navigate(`/login`)} className="btn btn-dark">
             please login to continue
           </button>

@@ -34,11 +34,6 @@ export default function Footer() {
                   About Us
                 </a>
               </li>
-              <li>
-                <a href="/contact" className="text-white text-decoration-none">
-                  Contact
-                </a>
-              </li>
             </ul>
           </Col>
 

@@ -39,11 +39,9 @@ export default function Login() {
         }
       } else {
         const errorText = await response.text();
-        if (errorText === 'invalid credential') {
+        if (errorText) {
           toast.error('Invalid credentials. Please try again.');
-        } else {
-          toast.error(`Login failed: ${errorText}`);
-        }
+        } 
       }
     } catch (error) {
       console.error('An error occurred during login:', error);

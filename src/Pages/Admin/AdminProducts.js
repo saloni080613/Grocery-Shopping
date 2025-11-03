@@ -10,20 +10,18 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 function AdminProductCard({ product, onEdit, onDelete }) {
   return (
     <article style={{
-      border: '1px solid #ddd',
-      borderRadius: 8,
-      overflow: 'hidden',
-      background: '#fff',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
-    }}>
+        border: "1px solid #eee",
+        borderRadius: 8,
+        overflow: "hidden",
+        background: "#fff",
+        position: "relative",
+      }}>
       <div style={{ aspectRatio: '4 / 3', background: '#f7f7f7' }}>
         {product.image ? (
           <img
             src={product.image}
             alt={product.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
           <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#aaa' }}>No Image</div>
